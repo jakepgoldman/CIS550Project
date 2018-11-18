@@ -22,9 +22,9 @@
  ORDER BY Y.crime_metro, Y.precipitation
 
 /*
-* Query 3(a) (Updated): Which cities have had continually increasing prices
-* from 2015-2019?
-*/
+ * Query 3(a) (Updated): Which cities have had continually increasing prices
+ * from 2015-2019?
+ */
 
   WITH Increases AS (
     SELECT H2.fips, H2.year
@@ -51,10 +51,10 @@
    GROUP BY D.fips
    HAVING COUNT(*) = 4
 
- /*
-  * Query 3(c) (Updated): Order counties by the number of average annual
-  * rent increases.
-  */
+/*
+ * Query 3(c) (Updated): Order counties by the number of average annual
+ * rent increases.
+ */
 
   WITH Increases AS (
     SELECT H2.fips, H2.year
@@ -66,9 +66,9 @@
   GROUP BY I.fips
   ORDER BY num_increases DESC
 
- /*
-  * Query 4 (Updated): Find the lowest crime city in each state.
-  */
+/*
+* Query 4 (Updated): Find the lowest crime city in each state.
+*/
 
   WITH MinCrimes AS (
     SELECT Y.state, min(Y.crime) as min_crime
