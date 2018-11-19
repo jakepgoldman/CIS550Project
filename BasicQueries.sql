@@ -1,3 +1,7 @@
+/* * * * * * * * * * * * * * * * * * * * *
+ * Connection String to Oracle Database  *
+ * * * * * * * * * * * * * * * * * * * * */
+
 /*
  * Connection string
  * sqlplus 'cis550project@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=cis-550-project.ccgsmtzjingg.us-east-2.rds.amazonaws.com)(PORT=1521))(CONNECT_DATA=(SID=ORCL)))'
@@ -7,12 +11,9 @@
  * CONNECT cis550project/susandavidson@//cis-550-project.ccgsmtzjingg.us-east-2.rds.amazonaws.com:1521
  */
 
-/*
- * SQL Queries to answer the questions from milestone 1
- */
-
-
-
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ * SQL Queries to Answer Questions from Milestone 1*
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
  * Query 1: If I prioritize raising a family (education and crime), where is
@@ -79,8 +80,12 @@
   ORDER BY num_increases DESC
 
 /*
-* Query 4 (Updated): Find the lowest crime city in each state.
-*/
+ * Query 4 (Updated): Find the lowest crime city in each state.
+ * NOTE: The original query was "QHow can I find corresponding cities within s
+ * states that I align with?" We plan to create queries based on preset filters
+ * like "Lowest Crime", "Lowest Unemployment", "Least Rain", etc. This is an
+ * example of one such query (e.g. "Lowest Crime")
+ */
 
   WITH MinCrimes AS (
     SELECT Y.state, min(Y.crime) as min_crime
@@ -93,14 +98,16 @@
 
 /*
  * Query 5: Where can I relocate to be with similar people to me
- * (wealth, education, political preference)?
+ * (wealth, education)?
+ * NOTE: Pull the values in the HAVING clause and the attributes in the GROPUBY
+ *       clause from sliders on the front end. Currently, query is written with
+ *       placeholder values
  */
 
-/*
-* Query 6: How correlated are political preference, education, and wealth?
-*/
-
-/*
- * Query 7: How can I find corresponding cities / suburbs within states that
- * I align with?
- */
+ SELECT C.name, C.unemployment, Y.crime_metro, S.act_score
+ FROM County C JOIN Map M ON C.id = M.fips
+               JOIN City Y ON Y.cbsa_name = M.cbsa_name
+               JOIN State S ON S.state_abbr = M.state_abbr
+ GROUP BY C.unemployment, Y.crime_metro, S.act_score
+ HAVING C.uemployment < 10.0 AND Y.crime_metro < 5000 AND S.act_score > 24
+ ORDER BY C.unemployment DESC
