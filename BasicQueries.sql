@@ -1,6 +1,18 @@
 /*
+ * Connection string
+ * sqlplus 'cis550project@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=cis-550-project.ccgsmtzjingg.us-east-2.rds.amazonaws.com)(PORT=1521))(CONNECT_DATA=(SID=ORCL)))'
+ * password: susandavidson
+ *
+ * EZCONNECT
+ * CONNECT cis550project/susandavidson@//cis-550-project.ccgsmtzjingg.us-east-2.rds.amazonaws.com:1521
+ */
+
+/*
  * SQL Queries to answer the questions from milestone 1
  */
+
+
+
 
 /*
  * Query 1: If I prioritize raising a family (education and crime), where is
@@ -21,7 +33,7 @@
  FROM County C JOIN Map M ON C.id = Map.fips
                JOIN State S ON S.id = Map.state
  ORDER BY C.crime, S.act_score
- 
+
  /*
   * Query 3: Where are the places with the highest “bang for buck” in terms of
   * education (education vs. wealth ratio)?
