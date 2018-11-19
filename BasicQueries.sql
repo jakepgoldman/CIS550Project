@@ -21,7 +21,7 @@
 
  SELECT C.name
  FROM County C JOIN Map M ON C.id = Map.fips
-               JOIN State S ON S.id = Map.state
+               JOIN State S ON S.abbr = Map.state_abbr
  ORDER BY C.crime, S.act_score
 
 /*
@@ -29,30 +29,78 @@
  * wealthy neighbors) where should I be looking?
  */
 
- SELECT C.name
- FROM County C JOIN Map M ON C.id = Map.fips
-               JOIN State S ON S.id = Map.state
- ORDER BY C.crime, S.act_score
+ SELECT Y.name
+ FROM City Y JOIN Map M ON Y.cbsa_name = M.cbsa_name
+ ORDER BY Y.crime_metro, Y.precipitation
 
- /*
-  * Query 3: Where are the places with the highest “bang for buck” in terms of
-  * education (education vs. wealth ratio)?
-  */
+/*
+ * Query 3(a) (Updated): Which cities have had continually increasing prices
+ * from 2015-2019?
+ */
 
- /*
-  * Query 4: How correlated are weather and crime?
-  */
+  WITH Increases AS (
+    SELECT H2.fips, H2.year
+    FROM Housing H1 JOIN Housing H2 ON (H1.year + 1) = H2.year
+    WHERE H2.fmr2 > H1.fmr2
+  )
+  SELECT I.fips
+  FROM Increases I
+  GROUP BY I.fips
+  HAVING COUNT(*) = 4
+
+/*
+ * Query 3(b) (Updated): Which cities have had continually decreasing prices
+ * from 2015-2019?
+ */
+
+   WITH Decreases AS (
+     SELECT H2.fips, H2.year
+     FROM Housing H1 JOIN Housing H2 ON (H1.year + 1) = H2.year
+     WHERE H2.fmr2 < H1.fmr2
+   )
+   SELECT D.fips
+   FROM Decreases I
+   GROUP BY D.fips
+   HAVING COUNT(*) = 4
+
+/*
+ * Query 3(c) (Updated): Order counties by the number of average annual
+ * rent increases.
+ */
+
+  WITH Increases AS (
+    SELECT H2.fips, H2.year
+    FROM Housing H1 JOIN Housing H2 ON (H1.year + 1) = H2.year
+    WHERE H2.fmr2 > H1.fmr2
+  )
+  SELECT I.fips, COUNT(*) as num_increases
+  FROM Increases I
+  GROUP BY I.fips
+  ORDER BY num_increases DESC
+
+/*
+* Query 4 (Updated): Find the lowest crime city in each state.
+*/
+
+  WITH MinCrimes AS (
+    SELECT Y.state, min(Y.crime) as min_crime
+    FROM City Y
+    GROUP BY Y.state
+  )
+  SELECT C.state, C.cbsa_name
+  FROM City C JOIN MinCrimes M ON C.state_abbr = M.state_abbr
+  WHERE C.crime = M.min_crime
 
 /*
  * Query 5: Where can I relocate to be with similar people to me
  * (wealth, education, political preference)?
  */
 
- /*
-  * Query 6: How correlated are political preference, education, and wealth?
-  */
+/*
+* Query 6: How correlated are political preference, education, and wealth?
+*/
 
-  /*
-   * Query 7: How can I find corresponding cities / suburbs within states that
-   * I align with?
-   */
+/*
+ * Query 7: How can I find corresponding cities / suburbs within states that
+ * I align with?
+ */
