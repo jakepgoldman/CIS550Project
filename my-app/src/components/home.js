@@ -7,23 +7,20 @@ import Predefined from "./predefined"
 class Home extends Component {
   render() {
     return (
-      <div>
-        <Navigation />
         <Container>
-          <Row>
-              <h1 align="center"> Abode </h1>
-          </Row>
-          <Row>
-              <h4 align="center"> Arnav Jagasia, Jake Goldman, James Xue, Josh Doman </h4>
-              <p>
-                At Penn, it is common for students to move to two places after
-                graduation: New York City or San Francisco. We set out on a mission
-                to prove there are many other places in the United States for you to live.
-              </p>
-          </Row>
-          <Predefined />
-        </Container>
-      </div>
+            <Row>
+                <h1 align="center"> Abode </h1>
+            </Row>
+            <Row>
+                <h4 align="center"> Arnav Jagasia, Jake Goldman, James Xue, Josh Doman </h4>
+                <p>
+                  At Penn, it is common for students to move to two places after
+                  graduation: New York City or San Francisco. We set out on a mission
+                  to prove there are many other places in the United States for you to live.
+                </p>
+            </Row>
+            <Predefined />
+          </Container>
     );
   }
 }
