@@ -1,0 +1,28 @@
+.landing {
+  color: yellow;
+}
+
+.landingJumbo {
+  position: relative;
+  margin-top: 1em;
+  height: 50%;
+  background-color: light-gray;
+}
+
+.background-image {
+  width: "100%";
+  height: fill;
+  /* background-image: url('../assets/background.jpg'); */
+  background-size: cover;
+}
+
+
+.search-card {
+
+  justify-content: center;
+  align-items: center;
+  height: inherit;
+  width: 50%;
+  padding-left: 5%;
+  padding-right: 5%;
+}
