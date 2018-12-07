@@ -1,27 +1,39 @@
-.home {
+/* The entire scrolling page */
+.scroll {
+  height: auto;
+  width:"100%";
+}
+
+/* One screen-height's worth of the scrolling page */
+.page {
   width: "100%";
   height: stretch;
-  /* background-image: url('../assets/background.jpg'); */
-  background-color: #151537;
-  background-size: cover;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-  display: flex;
 }
+
+/* The home component (search page below nav bar) */
+.home {
+  /* background-image: url('../assets/background.jpg'); */
+  height: -webkit-fill-available;
+  background-color: #151537;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+}
+
 
 .search-card-container {
   width: 100%;
   align-items: center;
   padding-left: 15%;
+  /* padding-top: 5% */
 }
 
 .search-card {
   margin: 0 auto;
   background-color: white;
-  height: 40em;
+  height: 30em;
   float: left;
-  width: 25%;
+  width: 30%;
 }
 
 .about {

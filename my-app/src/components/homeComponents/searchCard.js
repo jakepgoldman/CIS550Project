@@ -31,7 +31,7 @@ class SearchCard extends React.Component {
     return (
       <Card body className="search-card">
         <br/>
-        <h1 className="display-6 text-center">Find your next hometown.</h1>
+        <h2>Find your next hometown.</h2>
         <br/>
         <h4> I am ... </h4>
         <Form onSubmit={ (e) => this.submitForm(e) }>
