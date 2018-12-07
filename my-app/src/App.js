@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
 import Home from './components/home';
 import Advanced from './components/advanced';
+import Result from './components/result';
 
 class App extends Component {
   render() {
@@ -15,6 +16,7 @@ class App extends Component {
           <Switch>
               <Route exact path='/' component={Home} />
               <Route path='/advanced' component={Advanced} />
+              <Route path='/result' component={Result} />
           </Switch>
         </div>
       </Router>
