@@ -17,3 +17,9 @@
   float: left;
   width: 20%;
 }
+
+.slider-wrapper {;
+  width: 50%;
+  padding-left: 5%;
+  padding-right: 5%;
+}

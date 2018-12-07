@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Container, Row, Col } from "reactstrap";
 import { Map, TileLayer, Marker, Popup, GeoJSON } from 'react-leaflet';
-// import 'leaflet/dist/leaflet.css';
+import 'leaflet/dist/leaflet.css';
 import stateJson from './state.json';
 import countyJson from './county.json';
 
