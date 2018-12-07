@@ -5,16 +5,29 @@
   flex: 1;
 }
 
-.filter-panel-container {
-  margin: 0 auto;
-  background-color: white;
-  float: left;
-  height: 100%;
-  width: 20%;
+.advanced-content {
+  width: "100%";
+  height: stretch;
+  display: flex;
+  flex-flow: row;
 }
+
+.filter-panel-container {
+  background-color: white;
+  height: -webkit-fill-available;
+  width: 25%;
+}
+
+.advanced-result-container {
+  height: -webkit-fill-available;
+  background-color: white;
+  width: 100%;
+}
+
 
 .filter-panel {
   background-color: white;
+  height: 100%;
   display: flex;
   flex-flow: column;
 }

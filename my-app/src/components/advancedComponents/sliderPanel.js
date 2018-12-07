@@ -5,7 +5,7 @@ import Slider from './slider';
 class SliderPanel extends Component {
   constructor(props) {
     super(props);
-    this.sliderNames = ["employment", "poverty"];
+    this.sliderNames = ["employment", "poverty", "education", "crime"];
     this.updateSliders = this.updateSliders.bind(this);
     this.renderSliders = this.renderSliders.bind(this);
     this.submit = this.submit.bind(this);
