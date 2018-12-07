@@ -26,6 +26,8 @@ class SimpleSlider extends Component {
           <h6> {upper} </h6>
             <Slider
               value={value}
+              label={label}
+              id={label}
               onChange={this.handleSliderChange}
               min={0}
               max={100}

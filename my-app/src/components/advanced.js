@@ -5,12 +5,11 @@ import Slider from "./advancedComponents/slider";
 
 class Advanced extends Component {
   render() {
+
     return (
         <div className="advanced-landing">
           <div className="filter-panel-container">
-            <div>
-              <SliderPanel />
-            </div>
+            <SliderPanel />
           </div>
         </div>
     );

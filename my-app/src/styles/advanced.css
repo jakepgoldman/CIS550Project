@@ -3,20 +3,18 @@
   height: stretch;
   align-items: center;
   flex: 1;
-  display: flex;
 }
 
 .filter-panel-container {
-  width: 100%;
+  margin: 0 auto;
+  background-color: white;
+  float: left;
   height: 100%;
-  display: flex;
-  flex-flow: column;
+  width: 20%;
 }
 
 .filter-panel {
-  height: 100%;
   background-color: white;
-  width: 20%;
   display: flex;
   flex-flow: column;
 }
@@ -24,7 +22,6 @@
 .filter-panel-button {
   flex: 1 0 auto;
   width: 100%;
-  width: 20%;
 }
 
 .slider-wrapper {
