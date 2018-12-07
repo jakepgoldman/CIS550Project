@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/arnavjagasia/CIS550Project#readme",
   "dependencies": {
+    "@material-ui/core": "^3.6.1",
     "react": "^16.6.3",
     "react-router-dom": "^4.3.1"
   }

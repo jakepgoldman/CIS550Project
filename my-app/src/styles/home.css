@@ -5,12 +5,13 @@
   background-size: cover;
   justify-content: center;
   align-items: center;
+  flex: 1;
   display: flex;
 }
 
 .search-card-container {
   width: 100%;
-  vertical-align: middle;
+  align-items: center;
   padding-left: 15%;
 }
 
