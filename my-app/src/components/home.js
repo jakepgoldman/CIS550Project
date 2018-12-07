@@ -42,7 +42,6 @@ class Home extends Component {
     const hits = this.state;
     return (
         <Container>
-
             <Row>
                 <h1 align="center"> Abode </h1>
             </Row>
