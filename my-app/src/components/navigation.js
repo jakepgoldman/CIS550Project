@@ -39,7 +39,7 @@ class Navigation extends React.Component{
             <Nav className="ml-auto" navbar>
               {/* About Page */}
               <NavItem>
-                <NavLink href="/about/">About</NavLink>
+                <NavLink href="/advanced/">Advanced Search</NavLink>
               </NavItem>
 
               {/* Git Repo Link */}
