@@ -17,10 +17,8 @@
   },
   "homepage": "https://github.com/arnavjagasia/CIS550Project#readme",
   "dependencies": {
-    "leaflet": "^1.3.4",
-    "react": "^16.6.3",
-    "react-dom": "^16.6.3",
-    "react-leaflet": "^2.1.2"
     "@material-ui/core": "^3.6.1",
+    "react": "^16.6.3",
+    "react-router-dom": "^4.3.1"
   }
 }
