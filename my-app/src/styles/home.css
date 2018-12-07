@@ -1,7 +1,8 @@
 .home {
   width: "100%";
-  height: fill;
-  background-image: url('../assets/background.jpg');
+  height: stretch;
+  /* background-image: url('../assets/background.jpg'); */
+  background-color: #151537;
   background-size: cover;
   justify-content: center;
   align-items: center;
@@ -25,7 +26,7 @@
 
 .about {
   width: "100%";
-  height: fill;
+  height: stretch;
   background-color: white;
   justify-content: center;
   align-items: center;

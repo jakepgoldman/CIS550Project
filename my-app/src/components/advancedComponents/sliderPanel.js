@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { ListItem } from 'react';
-import { Container, Row, Col, FormGroup, Label, Input} from "reactstrap";
+import { Button } from "reactstrap";
 import Slider from './slider';
 
 class SliderPanel extends Component {
@@ -8,36 +7,55 @@ class SliderPanel extends Component {
     super(props);
 
     this.state = {
-      sliders: [
-        {"field": "employment", "value": 0},
-        {"field": "poverty", "value": 0}
-      ]
+      sliderNames: ["employment", "poverty"]
     };
 
+    this.updateSliders = this.updateSliders.bind(this);
     this.renderSliders = this.renderSliders.bind(this);
+    this.submit = this.submit.bind(this);
+  }
+
+  componentWillMount = () => {
+    this.sliderMap = new Map();
+    this.state.sliderNames.map((sliderName) => {
+      return (this.sliderMap.set(sliderName, 50));
+    })
+  }
+
+  updateSliders = (event, value) => {
+    var name = event.target.id;
+    console.log(`Inserting (${name}, ${value})`)
+    this.sliderMap.set(name, value);
   }
 
   renderSliders() {
     console.log(this.state.sliders);
     return (
-      this.state.sliders.map(function (sliderData) {
-        console.log(sliderData);
-        var sliderName = sliderData.name;
-        var sliderValue = sliderData.value;
+      this.state.sliderNames.map((sliderName) => {
         return (
-          <div key={sliderName}>
-          <Slider label={sliderName}/>
+          <div id={sliderName} key={sliderName} className="slider-wrapper">
+            <Slider label={sliderName} onChange={this.updateSliders.bind(this)}/>
           </div>
         )
       })
     )
   }
 
+  submit(e) {
+    for (var [key, value] of this.sliderMap.entries()) {
+      console.log(key + ' = ' + value);
+    }
+  }
+
   render(){
     return(
-      <div className="filter-panel">
-        <h1> "Hello" </h1>
-        {this.renderSliders()}
+      <div>
+        <div className="filter-panel">
+          {this.renderSliders()}
+        </div>
+        <div className="filter-panel-button">
+          <Button style={{width:'100%'}} onClick={this.submit}>Go!</Button>
+        </div>
       </div>
     )
   }

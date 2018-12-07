@@ -1,18 +1,7 @@
 import React, { Component } from 'react';
 import Slider from '@material-ui/lab/Slider';
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
-import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 
 import '../../styles/advanced.css'
-
-const styles = {
-  root: {
-    width: 300,
-  },
-  slider: {
-    padding: '22px 0px',
-  },
-};
 
 class SimpleSlider extends Component {
   constructor(props) {
@@ -20,38 +9,28 @@ class SimpleSlider extends Component {
     this.state = {
       value: 50,
     }
-    this.handleChange.bind(this);
+    this.handleSliderChange.bind(this);
   }
 
-
-  handleChange = (event, value) => {
-    console.log(value);
+  handleSliderChange = (event, value) => {
     this.setState({ value });
+    this.props.onChange(event, value);
   };
 
   render() {
     const label = this.props.label;
     const value = this.state.value;
-
-    const muiTheme = createMuiTheme({
-      slider: {
-        trackColor: 'black',
-        selectionColor: 'black'
-      },
-    });
-
+    var upper = label.charAt(0).toUpperCase() + label.substr(1) + ':';
     return (
         <div>
-          <h2> {label} </h2>
-          <MuiThemeProvider muiTheme={muiTheme}>
+          <h6> {upper} </h6>
             <Slider
               value={value}
-              onChange={this.handleChange}
+              onChange={this.handleSliderChange}
               min={0}
               max={100}
               step={10}
             />
-          </MuiThemeProvider>
         </div>
     );
   }

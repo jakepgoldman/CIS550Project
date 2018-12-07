@@ -1,19 +1,15 @@
 import React, { Component } from 'react';
-import { Container, Row, Col } from "reactstrap";
-import FilterPanel from "./advancedComponents/filterPanel";
-import SimpleSlider from "./advancedComponents/slider";
+import SliderPanel from "./advancedComponents/sliderPanel"
 import '../styles/advanced.css';
-
-const filters = [ "employment", "poverty"];
+import Slider from "./advancedComponents/slider";
 
 class Advanced extends Component {
   render() {
     return (
         <div className="advanced-landing">
           <div className="filter-panel-container">
-            {/*<FilterPanel filters={filters}/> */}
-            <div className="slider-wrapper">
-              <SimpleSlider label="Employment"/>
+            <div>
+              <SliderPanel />
             </div>
           </div>
         </div>

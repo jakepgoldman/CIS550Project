@@ -1,11 +1,11 @@
 import React from 'react';
-import { Card, CardTitle, CardText, Button, Form, FormGroup, Label, Input, FormText, Container, Row } from 'reactstrap';
+import { Card, Button, Form, FormGroup, Input } from 'reactstrap';
 import '../../styles/home.css'
 
 class SearchCard extends React.Component {
   constructor(props) {
     super(props);
-      this.state = {
+    this.state = {
       'choice': '',
     }
     this.handleChange = this.handleChange.bind(this);
