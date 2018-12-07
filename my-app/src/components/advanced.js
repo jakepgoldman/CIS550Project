@@ -12,7 +12,6 @@ class Advanced extends Component {
         <div className="advanced-landing">
           <div className="filter-panel-container">
             <FilterPanel filters={filters}/>
-            <SliderPanel/>
           </div>
         </div>
     );
