@@ -1,0 +1,39 @@
+.home {
+  width: "100%";
+  height: fill;
+  background-image: url('../assets/background.jpg');
+  background-size: cover;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  display: flex;
+}
+
+.search-card-container {
+  width: 100%;
+  align-items: center;
+  padding-left: 15%;
+}
+
+.search-card {
+  margin: 0 auto;
+  background-color: white;
+  height: 40em;
+  float: left;
+  width: 25%;
+}
+
+.about {
+  width: "100%";
+  height: fill;
+  background-color: white;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.about-jumbo {
+  margin: 0 auto;
+  vertical-align: middle;
+  width: 50%
+}
