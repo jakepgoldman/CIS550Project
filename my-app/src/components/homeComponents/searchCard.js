@@ -37,7 +37,7 @@ class SearchCard extends React.Component {
         <Form onSubmit={ (e) => this.submitForm(e) }>
           <FormGroup>
           <Input type="select" name="select" value={ choice } onChange={ (e) => { this.handleChange(e)} }>
-            <option> An Explorer</option>
+            <option>An Explorer</option>
             <option>A Parent</option>
             <option>Single</option>
             <option>A City-Goer</option>
@@ -46,7 +46,7 @@ class SearchCard extends React.Component {
           </FormGroup>
         </Form>
         <br/>
-        <Button onClick={(e) => {this.submitForm(e)}}>Start Looking!</Button>
+        <Button onClick={(e) => {this.submitForm(e)}}> Start Looking!</Button>
       </Card>
     );
   }
