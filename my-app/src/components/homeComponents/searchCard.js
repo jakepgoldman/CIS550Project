@@ -1,11 +1,11 @@
 import React from 'react';
-import { Card, CardTitle, CardText, Button, Form, FormGroup, Label, Input, FormText, Container, Row } from 'reactstrap';
+import { Card, Button, Form, FormGroup, Input } from 'reactstrap';
 import '../../styles/home.css'
 
 class SearchCard extends React.Component {
   constructor(props) {
     super(props);
-      this.state = {
+    this.state = {
       'choice': '',
     }
     this.handleChange = this.handleChange.bind(this);
@@ -31,7 +31,7 @@ class SearchCard extends React.Component {
     return (
       <Card body className="search-card">
         <br/>
-        <h1 className="display-6 text-center">Find your next hometown.</h1>
+        <h2>Find your next hometown.</h2>
         <br/>
         <h4> I am ... </h4>
         <Form onSubmit={ (e) => this.submitForm(e) }>

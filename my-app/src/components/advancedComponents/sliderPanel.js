@@ -1,44 +1,68 @@
 import React, { Component } from 'react';
-import { ListItem } from 'react';
-import { Container, Row, Col, FormGroup, Label, Input} from "reactstrap";
+import { Card, Button } from "reactstrap";
 import Slider from './slider';
 
 class SliderPanel extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      sliders: [
-        {"field": "employment", "value": 0},
-        {"field": "poverty", "value": 0}
-      ]
-    };
-
+    this.sliderNames = ["employment", "poverty", "education", "crime"];
+    this.updateSliders = this.updateSliders.bind(this);
     this.renderSliders = this.renderSliders.bind(this);
+    this.submit = this.submit.bind(this);
   }
 
-  renderSliders() {
-    console.log(this.state.sliders);
+  /* Initalize the map of slider values upon mount */
+  componentWillMount = () => {
+    this.sliderMap = new Map();
+    this.sliderNames.map((sliderName) => {
+      return (this.sliderMap.set(sliderName, 50));
+    })
+
+  }
+
+  /* Create the onChange function for the slider panel */
+  updateSliders = (event, value) => {
+    var name = event.target.id;
+    if (name === "") {
+      return;
+    } else {
+      console.log(`Inserting (${name}, ${value})`)
+      this.sliderMap.set(name, value);
+      return;
+    }
+  }
+
+  /* Iterative function to render all of the sliderss */
+  renderSliders = () => {
     return (
-      this.state.sliders.map(function (sliderData) {
-        console.log(sliderData);
-        var sliderName = sliderData.name;
-        var sliderValue = sliderData.value;
+      this.sliderNames.map((sliderName) => {
         return (
-          <div key={sliderName}>
-          <Slider label={sliderName}/>
+          <div id={sliderName} key={sliderName} className="slider-wrapper">
+            <Slider label={sliderName} onChange={this.updateSliders.bind(this)}/>
           </div>
         )
       })
     )
   }
 
+  submit = (e) => {
+    for (var [key, value] of this.sliderMap.entries()) {
+      console.log(key + ' = ' + value);
+    }
+  }
+
   render(){
     return(
-      <div className="filter-panel">
-        <h1> "Hello" </h1>
-        {this.renderSliders()}
-      </div>
+      <Card body style={{height: '100%'}}>
+        <br/>
+        <div className="filter-panel">
+          {this.renderSliders()}
+        </div>
+        <br/>
+        <div className="filter-panel-button">
+          <Button style={{width:'100%'}} onClick={this.submit}>Go!</Button>
+        </div>
+      </Card>
     )
   }
 
