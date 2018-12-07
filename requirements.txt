@@ -1,7 +1,15 @@
 Click==7.0
+cx-Oracle==7.0.0
 Flask==1.0.2
 Flask-API==1.0
+Flask-Cors==3.0.7
 itsdangerous==1.1.0
 Jinja2==2.10
 MarkupSafe==1.1.0
+pbr==5.1.1
+six==1.11.0
+stevedore==1.30.0
+virtualenv==16.1.0
+virtualenv-clone==0.4.0
+virtualenvwrapper==4.8.2
 Werkzeug==0.14.1
