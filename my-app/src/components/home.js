@@ -1,45 +1,53 @@
 import React, { Component } from "react";
 import { Container, Row, Col } from "reactstrap";
 import Navigation from "./navigation";
-import Predefined from "./predefined"
+import Predefined from "./predefined";
 // import route from react router
+import $ from 'jquery';
+const tasksURI = 'http://localhost:5000/talk';
+
+const ajax = function(uri, method, data) {
+    var request = {
+        url: uri,
+        type: method,
+        contentType: "application/json",
+        accepts: "application/json",
+        cache: false,
+        crossDomain: true,
+        dataType: 'json',
+        data: JSON.stringify(data),
+        error: function(jqXHR) {
+            console.log("ajax error " + jqXHR.status);
+        }
+    };
+    return $.ajax(request);
+}
+
+const fetchTasks = (callback) => {
+    ajax(tasksURI, 'GET', {}).done(callback);
+};
 
 class Home extends Component {
     constructor(props) {
       super(props);
 
       this.state = {
-        data: null,
-      };
+        tasks: []
+      }
+      // this.state = {
+      //   data: null,
+      // };
     }
 
     componentDidMount() {
-      // fetch('http://127.0.0.1:5000/', { mode: 'no-cors' })
-      //   .then(response => response.json())
-      //   .then(data => this.setState({ data }));
-      fetch('http://127.0.0.1:5000/')
-        .then(response => {
-          if (response.status === 200) {
-            return response.json();
-          } else {
-            throw new Error('Something went wrong on api server!');
-          }
-        });
+      fetchTasks((data) => {
+          console.log(data);
+          this.setState({tasks: data.tasks});
+      });
     }
 
 
   render() {
-    fetch('http://127.0.0.1:5000/')
-      .then(response => {
-        if (response.status === 200) {
-          return response.json();
-        } else {
-          throw new Error('Something went wrong on api server!');
-        }
-      });
-
-    console.log(this.state);
-    const hits = this.state;
     return (
         <Container>
             <Row>

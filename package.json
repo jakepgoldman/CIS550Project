@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/arnavjagasia/CIS550Project/issues"
   },
-  "homepage": "https://github.com/arnavjagasia/CIS550Project#readme"
+  "homepage": "https://github.com/arnavjagasia/CIS550Project#readme",
+  "dependencies": {
+    "react": "^16.6.3",
+    "react-router-dom": "^4.3.1"
+  }
 }
