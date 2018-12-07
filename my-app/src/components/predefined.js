@@ -7,16 +7,16 @@ class Predefined extends React.Component {
       <Container>
           <Form>
             <FormGroup>
-              <Label for="exampleSelectMulti">I am ...</Label>
-              <Input type="select" name="selectMulti" id="exampleSelectMulti" multiple>
-                <option>Explorer</option>
-                <option>Parent</option>
-                <option>Single</option>
-                <option>City-Goer</option>
-                <option>Boujee</option>
+            <Label for="dropDown">I am...</Label>
+            <Input type="select" name="select" id="dropDown">
+              <option>An Explorer</option>
+              <option>A Parent</option>
+              <option>Single</option>
+              <option>A City-Goer</option>
+              <option>Boujee</option>
               </Input>
             </FormGroup>
-            <Button>Submit</Button>
+            <Button>Go!</Button>
           </Form>
       </Container>
     );
