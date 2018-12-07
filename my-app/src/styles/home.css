@@ -9,20 +9,29 @@
   background-color: light-gray;
 }
 
-.background-image {
+.home {
   width: "100%";
   height: fill;
-  /* background-image: url('../assets/background.jpg'); */
+  background-image: url('../assets/background.jpg');
   background-size: cover;
-}
-
-
-.search-card {
-
   justify-content: center;
   align-items: center;
-  height: inherit;
-  width: 50%;
-  padding-left: 5%;
-  padding-right: 5%;
+  display: flex;
+}
+
+.search-card-container {
+  width: 100%;
+  vertical-align: middle;
+  padding-left: 15%;
+}
+
+.search-card {
+  margin: 0 auto;
+  height: 40em;
+  float: left;
+  width: 25%;
+}
+
+.home-caption {
+  width: 100%;
 }

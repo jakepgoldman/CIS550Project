@@ -29,9 +29,11 @@ class SearchCard extends React.Component {
   render() {
     const { choice } = this.state;
     return (
-      <Card body>
-        <CardTitle className="display-4">Find your next hometown.</CardTitle>
-        <h2 className="display-6"> I am ... </h2>
+      <Card body className="search-card">
+        <br/>
+        <h1 className="display-6 text-center">Find your next hometown.</h1>
+        <br/>
+        <h4> I am ... </h4>
         <Form onSubmit={ (e) => this.submitForm(e) }>
           <FormGroup>
           <Input type="select" name="select" value={ choice } onChange={ (e) => { this.handleChange(e)} }>
@@ -43,6 +45,7 @@ class SearchCard extends React.Component {
             </Input>
           </FormGroup>
         </Form>
+        <br/>
         <Button onClick={(e) => {this.submitForm(e)}}>Start Looking!</Button>
       </Card>
     );
