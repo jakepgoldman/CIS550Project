@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import SliderPanel from "./advancedComponents/sliderPanel"
+import SliderPanel from "./advancedComponents/sliderPanel";
 import '../styles/advanced.css';
 import Slider from "./advancedComponents/slider";
 import Navigation from "./navigation";
-import Result from "./result";
+import ResultPanel from "./advancedComponents/resultPanel";
 
 class Advanced extends Component {
   render() {
@@ -16,7 +16,7 @@ class Advanced extends Component {
               <SliderPanel />
             </div>
             <div className="advanced-result-container">
-              <Result />
+              <ResultPanel />
             </div>
           </div>
         </div>
