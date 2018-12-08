@@ -19,8 +19,8 @@ class Navigation extends React.Component{
     };
 
     this.toggle = this.toggle.bind(this);
-    this.renderAdvancedLink = this.bind(this);
-    this.renderGitRepoLink = this.bind(this);
+    this.renderAdvancedLink = this.renderAdvancedLink.bind(this);
+    this.renderGitRepoLink = this.renderGitRepoLink.bind(this);
   }
 
   toggle() {
