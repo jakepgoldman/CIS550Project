@@ -9,7 +9,7 @@
 .advanced-content {
   display: flex;
   flex-flow: row;
-  align-items: top;
+  align-items: stretch;
   height: stretch;
 }
 
@@ -22,11 +22,17 @@
 .advanced-result-container {
   background-color: white;
   width: "100%";
+  margin: auto;
+  display: flex;
+  flex-flow: column;
 }
 
 .advanced-result-column {
   display: flex;
   flex-flow: row;
+  width: "100%";
+  margin: auto;
+  align-self: flex-start;
 }
 
 .sidebar {
