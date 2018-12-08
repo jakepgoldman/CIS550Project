@@ -16,7 +16,7 @@
 .filter-panel-container {
   background-color: white;
   height: 100%;
-  width: 25%;
+  width: 20%;
 }
 
 .result-panel-container {
@@ -31,12 +31,16 @@
   flex-flow: column;
 }
 
-
 .result-cards {
   display: flex;
   flex-flow: row;
   width: "100%";
   margin: auto;
+  text-align: center;
+}
+
+.custom-card {
+  flex: 1 ;
 }
 
 .belowCards {

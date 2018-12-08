@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import SliderPanel from "./advancedComponents/sliderPanel";
 import '../styles/advanced.css';
 import Sidebar from "./advancedComponents/sidebar";
 import Navigation from "./navigation";
@@ -7,7 +6,11 @@ import ResultPanel from "./advancedComponents/resultPanel";
 
 class Advanced extends Component {
   render() {
-
+    const resultFips = [
+      {'number':1, 'fips': '010101'},
+      {'number':2, 'fips': '12304'},
+      {'number':3, 'fips': '23525'},
+    ];
     return (
         <div className="advanced-landing page">
             <Navigation />
@@ -16,7 +19,7 @@ class Advanced extends Component {
               <Sidebar />
             </div>
             <div className="result-panel-container">
-              <ResultPanel />
+              <ResultPanel results={resultFips} />
             </div>
           </div>
         </div>

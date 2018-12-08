@@ -120,7 +120,7 @@ class Sidebar extends Component {
       jsonData[key] = value;
     }
     jsonData['return_by_state'] = this.state.radioButtonValue === this.radioButtonNames[0] ? true : false;
-    
+
     var regex = /\d+/;
     var matches = this.state.housingDropdownChoice.match(regex);
 
@@ -128,7 +128,7 @@ class Sidebar extends Component {
       jsonData["housing_filter_value"] = parseInt(matches[0]);
     } else {
       jsonData["housing_filter_value"] = 1;
-    } 
+    }
 
     if (this.state.housingDropdownChoice === "None") {
       jsonData["housing_filter_direction"] = 0;
