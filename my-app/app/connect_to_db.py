@@ -108,7 +108,10 @@ def get_advanced():
         "education": request.args.get("education")
     }
 
-    query = get_optimal_query(values)
+    housing_filter_direction = request.args.get("housing_filter_direction")
+    housing_filter_value = request.args.get("housing_filter_value")
+
+    query = get_optimal_query(values, housing_filter_direction, housing_filter_value)
     print(query)
 
     cur = connect_to_database()
@@ -128,7 +131,7 @@ def get_advanced():
         })
     return jsonify(formatted_result)
 
-def get_optimal_query(values):
+def get_optimal_query(values, direction, value):
     sorted_values = []
     for key, value in sorted(values.items(), key=lambda x: x[1]):
         if int(value) > 0:
@@ -147,13 +150,16 @@ def get_optimal_query(values):
 
     # Select and order, select and order, at end order by them all
     index = [101, 76, 51, 25, 6]
+    isHousingFilter = int(direction) != 0
 
     # Iterate through sorted_values, for each value, find table in table_map correspond to number. If act - add DESC
-    inner_query = get_inner_function(sorted_values, len(sorted_values), table_map, index);
-    sorted_query = "SELECT fips, cbsa_name, {attribute} FROM ({inner_query}) WHERE ROWNUM < 4 ORDER BY {attribute}".format(inner_query=inner_query, attribute=table_map[sorted_values[0]])
-    return sorted_query
+    inner_query = get_inner_function(sorted_values, len(sorted_values), table_map, index, isHousingFilter);
+    sorted_query = """
+        SELECT fips, cbsa_name, {attribute} FROM ({inner_query}) WHERE ROWNUM < 4 ORDER BY {attribute}
+        """.format(inner_query=inner_query, attribute=table_map[sorted_values[0]])
+    return isHousingFilter ? get_housing_query(direction, value) + sorted_query : sorted_query
 
-def get_inner_function(sorted_values, i, table_map, index):
+def get_inner_function(sorted_values, i, table_map, index, with_housing_filter):
     i = i - 1;
     if i < 0:
         return """
@@ -162,7 +168,7 @@ def get_inner_function(sorted_values, i, table_map, index):
             JOIN County co ON m.fips=co.fips
             JOIN State s ON s.state_abbr=m.state_abbr
             JOIN Housing h ON h.fips=m.fips AND h.year = 2019
-            """
+            """ + with_housing_filter ? "WHERE m.fips NOT IN HousingTrend" : ""
     else:
         return """
             SELECT * FROM ({inner}) WHERE ROWNUM < {num_value} ORDER BY {attribute}
