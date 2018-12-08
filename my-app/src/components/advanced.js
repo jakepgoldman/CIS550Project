@@ -15,7 +15,7 @@ class Advanced extends Component {
             <div className="filter-panel-container">
               <Sidebar />
             </div>
-            <div className="advanced-result-container">
+            <div className="result-panel-container">
               <ResultPanel />
             </div>
           </div>
