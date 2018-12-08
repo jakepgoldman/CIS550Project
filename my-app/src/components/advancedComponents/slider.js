@@ -1,41 +1,41 @@
 import React, { Component } from 'react';
+import Slider from '@material-ui/lab/Slider';
 
-const styles = {
-  root: {
-    width: 300,
-  },
-  slider: {
-    padding: '22px 0px',
-  },
-};
+import '../../styles/advanced.css'
 
-class Slider extends Component {
-  constructor() {
+class SimpleSlider extends Component {
+  constructor(props) {
+    super(props)
     this.state = {
       value: 50,
-    };
-
-    this.handleChange.bind(this);
+    }
+    this.handleSliderChange.bind(this);
   }
 
-  handleChange = (event, value) => {
+  handleSliderChange = (event, value) => {
     this.setState({ value });
+    this.props.onChange(event, value);
   };
 
   render() {
-    const label = this.props;
-    const { value } = this.state;
-
+    const label = this.props.label;
+    const value = this.state.value;
+    var upper = label.charAt(0).toUpperCase() + label.substr(1) + ':';
     return (
-      <div>
-        <h2>{label}</h2>
-        <Slider
-          value={value}
-          onChange={this.handleChange}
-        />
-      </div>
+        <div>
+          <h6> {upper} </h6>
+            <Slider
+              value={value}
+              label={label}
+              id={label}
+              onChange={this.handleSliderChange}
+              min={0}
+              max={100}
+              step={10}
+            />
+        </div>
     );
   }
 }
 
-export default Slider;
+export default SimpleSlider;

@@ -1,19 +1,43 @@
 .advanced-landing {
   width: "100%";
-  height: fill;
+  height: stretch;
   align-items: center;
   flex: 1;
+}
+
+.advanced-content {
+  width: "100%";
+  height: stretch;
   display: flex;
+  flex-flow: row;
 }
 
 .filter-panel-container {
-  width: 100%;
-  height: 100%;
+  background-color: white;
+  height: -webkit-fill-available;
+  width: 25%;
 }
 
-.filter-panel {
-  height: 100%;
+.advanced-result-container {
+  height: -webkit-fill-available;
   background-color: white;
-  float: left;
-  width: 20%;
+  width: 100%;
+}
+
+
+.filter-panel {
+  background-color: white;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+}
+
+.filter-panel-button {
+  flex: 1 0 auto;
+  width: 100%;
+}
+
+.slider-wrapper {
+  padding: 5%;
+  flex: 1 0 auto;
 }

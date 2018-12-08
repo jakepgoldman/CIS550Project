@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
-import { Container, Row, Col } from "reactstrap";
-import FilterPanel from "./advancedComponents/filterPanel";
-import SliderPanel from "./advancedComponents/sliderPanel";
+import SliderPanel from "./advancedComponents/sliderPanel"
 import '../styles/advanced.css';
-
-const filters = [ "employment", "poverty"];
+import Slider from "./advancedComponents/slider";
+import Navigation from "./navigation";
+import Result from "./result";
 
 class Advanced extends Component {
   render() {
+
     return (
         <div className="advanced-landing">
-          <div className="filter-panel-container">
-            <FilterPanel filters={filters}/>
+            <Navigation />
+          <div className="advanced-content">
+            <div className="filter-panel-container">
+              <SliderPanel />
+            </div>
+            <div className="advanced-result-container">
+              <Result />
+            </div>
           </div>
         </div>
     );

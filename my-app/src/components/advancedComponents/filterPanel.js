@@ -8,7 +8,7 @@ import CheckboxPanel from './checkboxPanel';
 class FilterPanel extends Component {
   constructor(props) {
     super(props);
-      this.state = {
+    this.state = {
       'fieldSelected': '',
     }
     this.handleChange = this.handleChange.bind(this);
