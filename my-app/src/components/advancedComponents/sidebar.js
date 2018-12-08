@@ -91,6 +91,7 @@ class Sidebar extends Component {
       console.log(key + ' = ' + value);
     }
     console.log(this.state.radioButtonValue)
+    //TODO based on the map and current state, build the query!
   }
 
   render(){
