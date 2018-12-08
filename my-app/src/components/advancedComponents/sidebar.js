@@ -16,7 +16,7 @@ class Sidebar extends Component {
     this.submit = this.submit.bind(this);
 
     this.state = {
-      'housingDropdownChoice': '',
+      'housingDropdownChoice': 'None',
       'radioButtonValue': ' ',
     };
 
@@ -119,8 +119,27 @@ class Sidebar extends Component {
     for (var [key, value] of this.sliderMap.entries()) {
       jsonData[key] = value;
     }
-    jsonData['geographic-level'] = this.state.radioButtonValue;
-    jsonData['housing-filter'] = this.state.housingDropdownChoice;
+    jsonData['return_by_state'] = this.state.radioButtonValue === this.radioButtonNames[0] ? true : false;
+    
+    var regex = /\d+/;
+    var matches = this.state.housingDropdownChoice.match(regex);
+
+    if (matches) {
+      jsonData["housing_filter_value"] = parseInt(matches[0]);
+    } else {
+      jsonData["housing_filter_value"] = 1;
+    } 
+
+    if (this.state.housingDropdownChoice === "None") {
+      jsonData["housing_filter_direction"] = 0;
+      jsonData["housing_filter_value"] = 0;
+    } else if (this.state.housingDropdownChoice.includes("Increased")) {
+      jsonData["housing_filter_direction"] = 1;
+    } else {
+      jsonData["housing_filter_direction"] = -1;
+    }
+
+    console.log(jsonData);
   }
 
   render(){
