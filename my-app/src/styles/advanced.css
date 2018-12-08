@@ -1,4 +1,4 @@
-/* One screen-height's worth of the scrolling page */
+/* ADVANCED PAGE LAYOUT STYLES */
 .advanced-landing {
   width: "100%";
   height: stretch;
@@ -24,6 +24,8 @@
   flex: 1 0 auto;
 }
 
+/* RESULT PANEL STYLES */
+
 .result-panel {
   width: "100%";
   margin: auto;
@@ -43,11 +45,11 @@
   flex: 1 ;
 }
 
-.belowCards {
-  margin: 0 1 auto;
-  background-color: yellow;
+.map-box {
+  padding: 5%;
 }
 
+/* SIDEBAR STYLES */
 .sidebar {
   height: 100%;
 }

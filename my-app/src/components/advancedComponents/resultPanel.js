@@ -28,7 +28,9 @@ class ResultPanel extends Component {
 
   renderMap = () => {
     return (
-      <Map />
+      <div className="map-box">
+        <Map shouldDisplayState={true} shouldDisplayCounty={true}/>
+      </div>
     )
   }
 
@@ -38,7 +40,7 @@ class ResultPanel extends Component {
           <div className='result-cards'>
             {this.renderCards()}
           </div>
-          {/*this.renderMap()*/}
+          {this.renderMap()}
         </div>
     );
   }

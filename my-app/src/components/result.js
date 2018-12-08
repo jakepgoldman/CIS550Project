@@ -16,10 +16,34 @@ type State = {
 }
 
 class Result extends Component {
+  constructor(props) {
+    super(props)
+    this.renderStateLayer = this.renderStateLayer.bind(this);
+    this.renderCountyLayer = this.renderCountyLayer.bind(this);
+  }
+
   state = {
-    lat: 51.505,
-    lng: -0.08,
-    zoom: 13,
+    lat: 38.00,
+    lng: -98.00,
+    zoom: 4,
+  }
+
+  renderStateLayer() {
+    const shouldDisplayState = this.props.shouldDisplayState;
+    if (shouldDisplayState) {
+      return(
+        <GeoJSON data={stateJson} />
+      )
+    }
+  }
+
+  renderCountyLayer() {
+    const shouldDisplayCounty = this.props.shouldDisplayCounty;
+    if (shouldDisplayCounty) {
+      return(
+        <GeoJSON data={countyJson} />
+      )
+    }
   }
 
   render() {
@@ -28,13 +52,13 @@ class Result extends Component {
     const shouldDidsplayCounty = this.props.shouldDisplayCounty;
     return (
         <div>
-          <Map center={position} zoom={13} height={400}>
+          <Map center={position} zoom={this.state.zoom} height={400}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
             />
-            <GeoJSON data={stateJson} />
-            <GeoJSON data={countyJson} />
+            {this.renderStateLayer()}
+            {this.renderCountyLayer()}
             <Marker position={position}>
               <Popup>A pretty CSS3 popup.<br />Easily customizable.</Popup>
             </Marker>
