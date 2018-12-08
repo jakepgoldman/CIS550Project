@@ -41,7 +41,8 @@ class Result extends Component {
         weight: 2,
         opacity: 1,
         dashArray: '3',
-        fillOpacity: 0.7
+        fillOpacity: 0.7,
+        color: 'white'
       })
   }
 

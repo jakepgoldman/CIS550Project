@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Card, CardTitle, CardText, Button, Row, Col } from "reactstrap";
 import Map from "../result.js"
+import countyJson from '../county.json';
+import stateJson from '../state.json';
 
 class ResultPanel extends Component {
   constructor(props) {
@@ -10,7 +12,27 @@ class ResultPanel extends Component {
     this.rendermap = this.renderMap.bind(this);
   }
 
+  convertFipsToCountyName(fips) {
+    return (
+      countyJson['features'].filter(
+        county =>
+          county['properties']['STATE']==fips.toString().slice(0, 2) &&
+          county['properties']['COUNTY']==fips.toString().slice(2, 5)
+      )[0]['properties']['NAME']
+    )
+  }
+
+  convertFipsToStateName(fips) {
+    return (
+      stateJson['features'].filter(
+        state =>
+          state['properties']['STATE']==fips.toString().slice(0, 2)
+      )[0]['properties']['NAME']
+    )
+  }
+
   renderCards() {
+    console.log();
     return (
         this.props.results.map((result) => {
         var title = "Your " + this.positions[result.number - 1] + " choice:"
@@ -18,7 +40,9 @@ class ResultPanel extends Component {
           <div key={result.fips} className='custom-card'>
             <Card body>
               <CardTitle tag='h4'> {title} </CardTitle>
-              <CardText> {result.fips} </CardText>
+              <CardText>
+                {this.convertFipsToCountyName(result.fips)} County, {this.convertFipsToStateName(result.fips)}
+              </CardText>
             </Card>
           </div>
         )

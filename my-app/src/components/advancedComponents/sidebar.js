@@ -147,12 +147,13 @@ class Sidebar extends Component {
       <Card body className="sidebar">
         <br/>
         <div className="panel-content">
-          <h6> How important are the follwing attributes to you? </h6>
+          <h6>How important are the follwing attributes to you? </h6>
           {this.renderSliders()}
           <br/>
-          <h6> What geographic-level do you want to see? </h6>
+          <h6>What geographic-level would you like to see? </h6>
           {this.renderRadioButtons()}
           <br/>
+          <h6>What housing trends would you like to see?</h6>
           {this.renderHousingDropdown()}
         </div>
         <br/>
