@@ -37,12 +37,11 @@ class Result extends Component {
 
   countyFill(feature) {
     return ({
-          fillColor: this.getColor(feature.properties.STATE, feature.properties.COUNTY),
-          weight: 2,
-          opacity: 1,
-          color: 'white',
-          dashArray: '3',
-          fillOpacity: 0.7
+        fillColor: this.getColor(feature.properties.STATE, feature.properties.COUNTY),
+        weight: 2,
+        opacity: 1,
+        dashArray: '3',
+        fillOpacity: 0.7
       })
   }
 

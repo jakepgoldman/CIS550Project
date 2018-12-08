@@ -8,7 +8,7 @@ class Advanced extends Component {
   render() {
     const resultFips = [
       {'number':1, 'fips': '32007'},
-      {'number':2, 'fips': '12304'},
+      {'number':2, 'fips': '56013'},
       {'number':3, 'fips': '23525'},
     ];
     return (
