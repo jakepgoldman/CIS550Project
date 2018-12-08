@@ -1,33 +1,46 @@
+/* One screen-height's worth of the scrolling page */
 .advanced-landing {
   width: "100%";
   height: stretch;
-  align-items: center;
-  flex: 1;
+  display: flex;
+  flex-flow:column;
 }
 
 .advanced-content {
-  width: "100%";
-  height: stretch;
   display: flex;
   flex-flow: row;
+  align-items: stretch;
+  height: stretch;
 }
 
 .filter-panel-container {
   background-color: white;
-  height: -webkit-fill-available;
+  height: 100%;
   width: 25%;
 }
 
 .advanced-result-container {
-  height: -webkit-fill-available;
   background-color: white;
-  width: 100%;
+  width: "100%";
+  margin: auto;
+  display: flex;
+  flex-flow: column;
 }
 
+.advanced-result-column {
+  display: flex;
+  flex-flow: row;
+  width: "100%";
+  margin: auto;
+  align-self: flex-start;
+}
 
-.filter-panel {
-  background-color: white;
+.sidebar {
   height: 100%;
+}
+
+.panel-content {
+  background-color: white;
   display: flex;
   flex-flow: column;
 }

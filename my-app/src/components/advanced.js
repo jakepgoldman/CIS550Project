@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
-import SliderPanel from "./advancedComponents/sliderPanel"
+import SliderPanel from "./advancedComponents/sliderPanel";
 import '../styles/advanced.css';
-import Slider from "./advancedComponents/slider";
+import Sidebar from "./advancedComponents/sidebar";
 import Navigation from "./navigation";
-import Result from "./result";
+import ResultPanel from "./advancedComponents/resultPanel";
 
 class Advanced extends Component {
   render() {
 
     return (
-        <div className="advanced-landing">
+        <div className="advanced-landing page">
             <Navigation />
           <div className="advanced-content">
             <div className="filter-panel-container">
-              <SliderPanel />
+              <Sidebar />
             </div>
             <div className="advanced-result-container">
-              <Result />
+              <ResultPanel />
             </div>
           </div>
         </div>

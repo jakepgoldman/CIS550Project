@@ -17,7 +17,6 @@ class SliderPanel extends Component {
     this.sliderNames.map((sliderName) => {
       return (this.sliderMap.set(sliderName, 50));
     })
-
   }
 
   /* Create the onChange function for the slider panel */
