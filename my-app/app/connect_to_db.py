@@ -11,10 +11,13 @@ db_user = 'cis550project'
 db_password = 'susandavidson'
 db_connect = 'cis-550-project.ccgsmtzjingg.us-east-2.rds.amazonaws.com'
 
+def connect_to_database():
+    con = cx_Oracle.Connection(user='cis550project', password='susandavidson', dsn='cis-550-project.ccgsmtzjingg.us-east-2.rds.amazonaws.com/orcl')
+    return con.cursor()
+
 @app.route('/talk', methods=['GET'])
 def get_tasks():
-    con = cx_Oracle.Connection(user='cis550project', password='susandavidson', dsn='cis-550-project.ccgsmtzjingg.us-east-2.rds.amazonaws.com/orcl')
-    cur = con.cursor()
+    cur = connect_to_database()
     cur.execute('select * from State')
     set_to_return = []
     for result in cur:
@@ -25,6 +28,17 @@ def get_tasks():
     return jsonify(set_to_return)
     # return jsonify(obj)
     # return jsonify({'tasks': 'tasks'})
+
+@app.route('/explorer', methods=['GET'])
+def get_explorer():
+    cur = connect_to_database()
+    # low precipitation, medium poverty, medium crime
+    cur.execute('')
+    set_to_return = []
+    for result in cur:
+        set_to_return.append(result)
+
+    return jsonify(set_to_return)
 
 def convert_tuples(list, di):
     for i in range(len(list)):
