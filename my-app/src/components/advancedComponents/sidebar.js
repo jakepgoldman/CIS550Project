@@ -5,7 +5,7 @@ import Slider from './slider';
 class Sidebar extends Component {
   constructor(props) {
     super(props);
-    this.sliderNames = ["employment", "poverty", "education", "crime"];
+    this.sliderNames = ["employment", "poverty", "education", "crime", "housing"];
     this.radioButtonNames = ["By State", "By County"];
 
     this.updateSliders = this.updateSliders.bind(this);
@@ -58,8 +58,11 @@ class Sidebar extends Component {
   }
 
   /* Create the onChange function for the radio button panel */
-  updateRadioButtons = (value) => {
-    console.log(`Inserting ( ${value})`)
+  updateRadioButtons = (name) => {
+    console.log(name)
+    this.setState({
+      'radioButtonValue': name
+    });
     return;
   }
 
@@ -72,7 +75,7 @@ class Sidebar extends Component {
             return (
               <FormGroup check key={name}>
                 <Label check>
-                  <Input type="radio" name={name} onClick={this.updateRadioButtons.bind(this)}/>
+                  <Input type="radio" name="radio1" onClick={() => this.updateRadioButtons(name)}/>
                   {name}
                 </Label>
               </FormGroup>
@@ -87,6 +90,7 @@ class Sidebar extends Component {
     for (var [key, value] of this.sliderMap.entries()) {
       console.log(key + ' = ' + value);
     }
+    console.log(this.state.radioButtonValue)
   }
 
   render(){
@@ -94,8 +98,10 @@ class Sidebar extends Component {
       <Card body className="sidebar">
         <br/>
         <div className="panel-content">
+          <h6> How important are the follwing attributes to you? </h6>
           {this.renderSliders()}
           <br/>
+          <h6> What geographic-level do you want to see? </h6>
           {this.renderRadioButtons()}
         </div>
         <br/>
