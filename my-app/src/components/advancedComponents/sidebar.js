@@ -39,7 +39,6 @@ class Sidebar extends Component {
     if (name === "") {
       return;
     } else {
-      console.log(`Inserting (${name}, ${value})`)
       this.sliderMap.set(name, value);
       return;
     }
@@ -60,7 +59,6 @@ class Sidebar extends Component {
 
   /* Create the onChange function for the radio button panel */
   updateRadioButtons = (name) => {
-    console.log(name)
     this.setState({
       'radioButtonValue': name
     });
@@ -90,7 +88,6 @@ class Sidebar extends Component {
   handleHousingChange(e) {
     const { target } = e;
     const value = target.value;
-    console.log('Dropdown selected value:', value);
     this.setState({
       'housingDropdownChoice': value
     });
@@ -119,10 +116,13 @@ class Sidebar extends Component {
   }
 
   submit = (e) => {
+    var jsonData = {};
     for (var [key, value] of this.sliderMap.entries()) {
-      console.log(key + ' = ' + value);
+      jsonData[key] = value;
     }
-    console.log(this.state.radioButtonValue)
+    jsonData['geographic-level'] = this.state.radioButtonValue;
+    jsonData['housing-filter'] = this.state.housingDropdownChoice;
+    console.log(jsonData);
   }
 
   render(){
