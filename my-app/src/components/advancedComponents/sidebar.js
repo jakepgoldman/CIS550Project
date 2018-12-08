@@ -144,6 +144,7 @@ class Sidebar extends Component {
     console.log(jsonData);
 
     this.props.updateGeoLevel(this.state.radioButtonValue);
+    this.props.handleSearchQuery(jsonData);
   }
 
   render(){
