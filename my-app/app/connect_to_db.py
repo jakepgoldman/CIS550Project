@@ -99,11 +99,13 @@ def get_boujee():
 
 @app.route('/advanced', methods=['GET'])
 def get_advanced():
-    print(request.args.get("employment"))
-    print(request.args.get("poverty"))
-    print(request.args.get("crime"))
-    print(request.args.get("housing"))
-
+    crime = request.args.get("crime")
+    employment = request.args.get("employment")
+    poverty = request.args.get("poverty")
+    housing = request.args.get("housing")
+    housing_filter_direction = request.args.get("housing_filter_direction")
+    housing_filter_value = request.args.get("housing_filter_value")
+    return_by_state = request.args.get("return_by_state")
 
     cur = connect_to_database()
     query = """
