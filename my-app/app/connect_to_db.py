@@ -33,8 +33,14 @@ def get_tasks():
 def get_explorer():
     cur = connect_to_database()
     # low precipitation, low housing cost
-    # query = 'WITH rain_check AS ( SELECT cbsaname FROM City WHERE precipitation IS NOT NULL) SELECT h.fips, AVG(fmr2) FROM rain_check r JOIN Map m ON r.cbsaname=m.cbsa_name JOIN Housing h ON h.fips=m.fips GROUP BY h.fips HAVING AVG(fmr2) < 800;'
-    cur.execute('with rain_check AS ( SELECT cbsaname FROM City WHERE precipitation IS NOT NULL) SELECT h.fips FROM rain_check r JOIN Map m ON r.cbsaname=m.cbsa_name JOIN Housing h ON h.fips=m.fips GROUP BY h.fips HAVING AVG(fmr2) < 800')
+    query = """
+    WITH rain_check AS (
+    SELECT cbsaname FROM City WHERE precipitation IS NOT NULL)
+    SELECT h.fips, AVG(fmr2)
+    FROM rain_check r JOIN Map m ON r.cbsaname=m.cbsa_name JOIN Housing h ON h.fips=m.fips
+    GROUP BY h.fips HAVING AVG(fmr2) < 800
+    """
+    cur.execute(query)
     set_to_return = []
     for result in cur:
         set_to_return.append(result)
@@ -44,7 +50,7 @@ def get_explorer():
 @app.route('/family', methods=['GET'])
 def get_family():
     cur = connect_to_database()
-    # low precipitation, low housing cost
+    # high act, low suburb crime
     query = """
         WITH smart_state AS (
         SELECT state_abbr
@@ -66,6 +72,30 @@ def get_family():
 
     return jsonify(set_to_return)
 
+@app.route('/boujee', methods=['GET'])
+def get_boujee():
+    cur = connect_to_database()
+    # high act, low suburb crime
+    query = """
+        WITH low_crime AS (
+        SELECT cbsaname
+        FROM City
+        WHERE ROWNUM < 100
+        ORDER BY crime_metro ASC),
+        low_poverty AS (
+        SELECT c.fips, c.poverty_percent FROM County c JOIN Housing h ON c.fips=h.fips WHERE h.year = 2015 AND h.fmr2 > 1000 AND ROWNUM < 100)
+
+        Select m.fips
+        FROM low_crime lc JOIN Map m ON lc.cbsaname=m.cbsa_name JOIN low_poverty lp ON lp.fips=m.fips
+        WHERE ROWNUM < 6
+        ORDER BY lp.poverty_percent
+    """
+    cur.execute(query)
+    set_to_return = []
+    for result in cur:
+        set_to_return.append(result)
+
+    return jsonify(set_to_return)
 
 def convert_tuples(list, di):
     for i in range(len(list)):
