@@ -19,20 +19,29 @@
   width: 25%;
 }
 
-.advanced-result-container {
+.result-panel-container {
   background-color: white;
+  flex: 1 0 auto;
+}
+
+.result-panel {
   width: "100%";
   margin: auto;
   display: flex;
   flex-flow: column;
 }
 
-.advanced-result-column {
+
+.result-cards {
   display: flex;
   flex-flow: row;
   width: "100%";
   margin: auto;
-  align-self: flex-start;
+}
+
+.belowCards {
+  margin: 0 1 auto;
+  background-color: yellow;
 }
 
 .sidebar {

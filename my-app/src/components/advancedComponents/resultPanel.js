@@ -2,10 +2,15 @@ import React, { Component } from 'react';
 import { Card, CardTitle, CardText, Button, Row, Col } from "reactstrap";
 
 class ResultPanel extends Component {
-  render() {
+  constructor(props) {
+    super(props)
+    this.renderCards = this.renderCards.bind(this);
+  }
+
+  renderCards() {
     return (
-      <div className='advanced-result-column'>
-        <div className='card'>
+      <div className='result-cards'>
+        <div className='custom-card'>
           <Card body>
             <CardTitle tag='h4'>Your Top Choices:</CardTitle>
             <CardText>
@@ -17,7 +22,7 @@ class ResultPanel extends Component {
             </CardText>
           </Card>
         </div>
-        <div className='card'>
+        <div className='custom-card'>
           <Card body>
             <CardTitle tag='h4'>Your Bottom Choices:</CardTitle>
             <CardText>
@@ -30,6 +35,13 @@ class ResultPanel extends Component {
           </Card>
         </div>
       </div>
+    )
+  }
+  render() {
+    return (
+        <div >
+          {this.renderCards()}
+        </div>
     );
   }
 }
