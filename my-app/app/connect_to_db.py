@@ -15,8 +15,8 @@ def connect_to_database():
     con = cx_Oracle.Connection(user='cis550project', password='susandavidson', dsn='cis-550-project.ccgsmtzjingg.us-east-2.rds.amazonaws.com/orcl')
     return con.cursor()
 
-@app.route('/talk', methods=['GET'])
-def get_tasks():
+@app.route('/test', methods=['GET'])
+def get_test():
     cur = connect_to_database()
     cur.execute('select * from State')
     set_to_return = []
@@ -89,6 +89,61 @@ def get_boujee():
         FROM low_crime lc JOIN Map m ON lc.cbsaname=m.cbsa_name JOIN low_poverty lp ON lp.fips=m.fips
         WHERE ROWNUM < 6
         ORDER BY lp.poverty_percent
+    """
+    cur.execute(query)
+    set_to_return = []
+    for result in cur:
+        set_to_return.append(result)
+
+    return jsonify(set_to_return)
+
+@app.route('/citygoer', methods=['GET'])
+def get_citygoer():
+    cur = connect_to_database()
+    # high act, low suburb crime
+    query = """
+        WITH low_crime AS (
+        SELECT cbsaname, crime_city
+        FROM City
+        WHERE cbsaname IS NOT NULL AND ROWNUM < 100
+        ORDER BY crime_city),
+        distinct_map AS (
+        SELECT cbsa_name, Max(fips) as fips FROM Map GROUP BY cbsa_name)
+
+        Select m.fips, lc.cbsaname
+        FROM low_crime lc JOIN distinct_map m ON lc.cbsaname=m.cbsa_name
+        WHERE ROWNUM < 6
+        ORDER BY lc.crime_city;
+    """
+    cur.execute(query)
+    set_to_return = []
+    for result in cur:
+        set_to_return.append(result)
+
+    return jsonify(set_to_return)
+
+@app.route('/crimelord', methods=['GET'])
+def get_crimelord():
+    cur = connect_to_database()
+    # high act, low suburb crime
+    query = """
+        WITH high_crime AS (
+        SELECT cbsaname, crime_city
+        FROM City
+        WHERE cbsaname IS NOT NULL AND ROWNUM < 100
+        ORDER BY crime_city DESC),
+        distinct_map AS (
+        SELECT cbsa_name, Max(fips) as fips
+        FROM Map GROUP BY cbsa_name),
+        high_poverty AS (
+        SELECT fips, poverty_percent
+        FROM County
+        WHERE poverty_percent > 20 AND unemployment_rate > 7)
+
+        Select m.fips, hc.cbsaname
+        FROM high_crime hc JOIN distinct_map m ON hc.cbsaname=m.cbsa_name JOIN high_poverty hp ON m.fips=hp.fips
+        WHERE ROWNUM < 6
+        ORDER BY hc.crime_city, hp.poverty_percent DESC;
     """
     cur.execute(query)
     set_to_return = []
