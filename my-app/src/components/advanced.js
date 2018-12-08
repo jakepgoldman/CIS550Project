@@ -7,7 +7,7 @@ import ResultPanel from "./advancedComponents/resultPanel";
 class Advanced extends Component {
   render() {
     const resultFips = [
-      {'number':1, 'fips': '010101'},
+      {'number':1, 'fips': '32007'},
       {'number':2, 'fips': '12304'},
       {'number':3, 'fips': '23525'},
     ];

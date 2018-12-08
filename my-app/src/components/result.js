@@ -20,12 +20,30 @@ class Result extends Component {
     super(props)
     this.renderStateLayer = this.renderStateLayer.bind(this);
     this.renderCountyLayer = this.renderCountyLayer.bind(this);
+    this.countyFill = this.countyFill.bind(this);
+    this.getColor = this.getColor.bind(this);
   }
 
   state = {
     lat: 38.00,
     lng: -98.00,
     zoom: 4,
+  }
+
+  getColor(state, county) {
+    var fips = state + county;
+    return this.props.counties.includes(fips) ? '#800026' : ''
+  }
+
+  countyFill(feature) {
+    return ({
+          fillColor: this.getColor(feature.properties.STATE, feature.properties.COUNTY),
+          weight: 2,
+          opacity: 1,
+          color: 'white',
+          dashArray: '3',
+          fillOpacity: 0.7
+      })
   }
 
   renderStateLayer() {
@@ -41,7 +59,7 @@ class Result extends Component {
     const shouldDisplayCounty = this.props.shouldDisplayCounty;
     if (shouldDisplayCounty) {
       return(
-        <GeoJSON data={countyJson} />
+        <GeoJSON data={countyJson} style={this.countyFill}/>
       )
     }
   }

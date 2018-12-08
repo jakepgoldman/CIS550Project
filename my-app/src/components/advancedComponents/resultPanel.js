@@ -15,7 +15,7 @@ class ResultPanel extends Component {
         this.props.results.map((result) => {
         var title = "Your " + this.positions[result.number - 1] + " choice:"
         return (
-          <div className='custom-card'>
+          <div key={result.fips} className='custom-card'>
             <Card body>
               <CardTitle tag='h4'> {title} </CardTitle>
               <CardText> {result.fips} </CardText>
@@ -27,9 +27,14 @@ class ResultPanel extends Component {
   }
 
   renderMap = () => {
+    var fipsArr = [];
+    this.props.results.map((result) => {
+      console.log(result.fips);
+      fipsArr.push(result.fips);
+    })
     return (
       <div className="map-box">
-        <Map shouldDisplayState={true} shouldDisplayCounty={true}/>
+        <Map shouldDisplayState={true} shouldDisplayCounty={true} counties={fipsArr}/>
       </div>
     )
   }
