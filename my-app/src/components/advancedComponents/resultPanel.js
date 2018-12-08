@@ -9,7 +9,18 @@ class ResultPanel extends Component {
     super(props)
     this.positions = ["first", "second", "third"];
     this.renderCards = this.renderCards.bind(this);
-    this.rendermap = this.renderMap.bind(this);
+    this.renderMap = this.renderMap.bind(this);
+    // this.refreshMap = this.refreshMap.bind(this);
+
+    this.state = {
+      'geoLevel': 'By County'
+    }
+  }
+
+  componentWillReceiveProps(props) {
+    console.log(props)
+    const geoLevel = this.props.geoLevel;
+    this.setState({'geoLevel': geoLevel}, () => {this.renderMap()});
   }
 
   convertFipsToCountyName(fips) {
@@ -56,9 +67,19 @@ class ResultPanel extends Component {
       console.log(result.fips);
       fipsArr.push(result.fips);
     })
+    var shouldDisplayState = false;
+    var shouldDisplayCounty = false;
+    if (this.state.geoLevel === 'By State') {
+      console.log('Updating state')
+      shouldDisplayState = true;
+    }
+    if (this.state.geoLevel === 'By County') {
+      console.log('Updating county')
+      shouldDisplayCounty = true;
+    }
     return (
       <div className="map-box">
-        <Map shouldDisplayState={true} shouldDisplayCounty={true} counties={fipsArr}/>
+        <Map shouldDisplayState={shouldDisplayState} shouldDisplayCounty={shouldDisplayCounty} counties={fipsArr}/>
       </div>
     )
   }

@@ -58,9 +58,11 @@ class Sidebar extends Component {
 
   /* Create the onChange function for the radio button panel */
   updateRadioButtons = (name) => {
+    console.log(this.state.radioButtonValue);
+
     this.setState({
       'radioButtonValue': name
-    });
+    }, () => {console.log(this.state.radioButtonValue)});
     return;
   }
 
@@ -140,6 +142,8 @@ class Sidebar extends Component {
     }
 
     console.log(jsonData);
+
+    this.props.updateGeoLevel(this.state.radioButtonValue);
   }
 
   render(){

@@ -5,6 +5,25 @@ import Navigation from "./navigation";
 import ResultPanel from "./advancedComponents/resultPanel";
 
 class Advanced extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      'displayResult': false,
+      'geoLevel': 'By County',
+    }
+    this.updateGeoLevel = this.updateGeoLevel.bind(this);
+  }
+
+  updateGeoLevel(level) {
+    this.setState({
+      'geoLevel': level
+    }, () => {this.render()});
+  }
+
+  refreshGeoLevel(level) {
+
+  }
+
   render() {
     const resultFips = [
       {'number':1, 'fips': '32007'},
@@ -15,10 +34,10 @@ class Advanced extends Component {
             <Navigation />
           <div className="advanced-content">
             <div className="filter-panel-container">
-              <Sidebar />
+              <Sidebar updateGeoLevel={this.updateGeoLevel}/>
             </div>
             <div className="result-panel-container">
-              <ResultPanel results={resultFips} />
+              <ResultPanel results={resultFips} geoLevel={this.state.geoLevel}/>
             </div>
           </div>
         </div>
