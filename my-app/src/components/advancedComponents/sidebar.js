@@ -121,7 +121,6 @@ class Sidebar extends Component {
     }
     jsonData['geographic-level'] = this.state.radioButtonValue;
     jsonData['housing-filter'] = this.state.housingDropdownChoice;
-    console.log(jsonData);
   }
 
   render(){

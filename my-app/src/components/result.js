@@ -2,9 +2,12 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Container, Row, Col } from "reactstrap";
 import { Map, TileLayer, Marker, Popup, GeoJSON } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+
 import stateJson from './state.json';
 import countyJson from './county.json';
+
+import '../styles/resultmap.css'
+import 'leaflet/dist/leaflet.css';
 
 type State = {
   lat: number,
@@ -21,9 +24,11 @@ class Result extends Component {
 
   render() {
     const position = [this.state.lat, this.state.lng]
+    const shouldDisplayState = this.props.shouldDisplayState;
+    const shouldDidsplayCounty = this.props.shouldDisplayCounty;
     return (
         <div>
-          <Map center={position} zoom={13} height={300}>
+          <Map center={position} zoom={13} height={400}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
