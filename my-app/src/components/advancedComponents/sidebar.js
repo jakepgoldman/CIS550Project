@@ -7,10 +7,12 @@ class Sidebar extends Component {
     super(props);
     this.sliderNames = ["employment", "poverty", "education", "crime"];
     this.radioButtonNames = ["By State", "By County"];
+
     this.updateSliders = this.updateSliders.bind(this);
     this.renderSliders = this.renderSliders.bind(this);
     this.updateRadioButtons = this.updateRadioButtons.bind(this);
-    this.renderRadioButtons = this.renderSliders.bind(this);
+    this.renderRadioButtons = this.renderRadioButtons.bind(this);
+
     this.submit = this.submit.bind(this);
 
     this.state = {
@@ -68,9 +70,9 @@ class Sidebar extends Component {
         {
           this.radioButtonNames.map((name) => {
             return (
-              <FormGroup check>
+              <FormGroup check key={name}>
                 <Label check>
-                  <Input type="radio" name={name} key={name} onClick={this.updateRadioButtons.bind(this)}/>
+                  <Input type="radio" name={name} onClick={this.updateRadioButtons.bind(this)}/>
                   {name}
                 </Label>
               </FormGroup>
