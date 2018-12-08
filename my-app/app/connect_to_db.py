@@ -110,7 +110,7 @@ def get_advanced():
     cur = connect_to_database()
     query = """
         WITH HousingTrend AS (
-        	SELECT H3.fips
+        	SELECT H5.fips, H5.fmr2
         	FROM Housing H1
         	JOIN Housing H2
         	ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
@@ -124,17 +124,64 @@ def get_advanced():
         	AND {change} * H3.fmr2 >= {change} * H2.fmr2
         	AND {change} * H4.fmr2 >= {change} * H3.fmr2
         	AND {change} * H5.fmr2 >= {change} * H4.fmr2
-        	AND H5.year = ‘2019’
+        	AND H5.year = 2019
         )
-        SELECT fips FROM HousingTrend
-    """.format(change=housing_filter_value)
+        SELECT fips, fmr2 FROM HousingTrend WHERE ROWNUM < 6
+    """.format(change=housing_filter_direction)
 
     cur.execute(query)
     set_to_return = []
     for result in cur:
         set_to_return.append(result)
 
+    print(set_to_return)
+
     return jsonify(set_to_return)
+
+def get_housing_query(direction, value):
+    query = ""
+    if value == 1:
+        query = """
+            WITH HousingTrend AS (
+            	SELECT H5.fips, H5.fmr2
+            	FROM Housing H1
+            	JOIN Housing H2
+            	ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
+            	JOIN Housing H3
+            	ON H2.fips = H3.fips AND (H2.year + 1) = H3.year
+            	JOIN Housing H4
+            	ON H3.fips = H4.fips AND (H3.year + 1) = H4.year
+            	JOIN Housing H5
+            	ON H4.fips = H5.fips AND (H4.year + 1) = H5.year
+            	WHERE {change} * H2.fmr2 >= {change} * H1.fmr2
+            	AND {change} * H3.fmr2 >= {change} * H2.fmr2
+            	AND {change} * H4.fmr2 >= {change} * H3.fmr2
+            	AND {change} * H5.fmr2 >= {change} * H4.fmr2
+            	AND H5.year = 2019
+            )
+            SELECT fips, fmr2 FROM HousingTrend WHERE ROWNUM < 6
+        """.format(change=housing_filter_direction)
+    elif value == 1:
+        query = """
+            WITH HousingTrend AS (
+            	SELECT H5.fips, H5.fmr2
+            	FROM Housing H1
+            	JOIN Housing H2
+            	ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
+            	JOIN Housing H3
+            	ON H2.fips = H3.fips AND (H2.year + 1) = H3.year
+            	JOIN Housing H4
+            	ON H3.fips = H4.fips AND (H3.year + 1) = H4.year
+            	JOIN Housing H5
+            	ON H4.fips = H5.fips AND (H4.year + 1) = H5.year
+            	WHERE {change} * H2.fmr2 >= {change} * H1.fmr2
+            	AND {change} * H3.fmr2 >= {change} * H2.fmr2
+            	AND {change} * H4.fmr2 >= {change} * H3.fmr2
+            	AND {change} * H5.fmr2 >= {change} * H4.fmr2
+            	AND H5.year = 2019
+            )
+            SELECT fips, fmr2 FROM HousingTrend WHERE ROWNUM < 6
+        """.format(change=housing_filter_direction)
 
 def convert_tuples(list, di):
     for i in range(len(list)):
