@@ -7,6 +7,7 @@ import About from "./homeComponents/about";
 
 import $ from 'jquery';
 const tasksURI = 'http://localhost:5000/family';
+const baseURI = 'http://localhost:5000/'
 
 const ajax = function(uri, method, data) {
     var request = {
@@ -30,24 +31,43 @@ const fetchTasks = (callback) => {
 };
 
 class Home extends Component {
-    constructor(props) {
-      super(props);
+  constructor(props) {
+    super(props);
 
-      this.state = {
-        tasks: []
-      }
-      // this.state = {
-      //   data: null,
-      // };
+    this.state = {
+      tasks: []
     }
 
-    componentDidMount() {
-      fetchTasks((data) => {
-          console.log(data);
-          this.setState({tasks: data.tasks});
+    this.handleSearchQuery = this.handleSearchQuery.bind(this);
+  }
+
+  handleSearchQuery(choice) {
+    console.log(`Choice: ${choice}`)
+    if (choice === 'An Explorer') {
+      ajax(baseURI + '/explorer', 'GET', {}).done((data) => {
+        console.log(data);
+      });
+    } else if (choice === 'Boujuee') {
+      ajax(baseURI + '/boujee', 'GET', {}).done((data) => {
+        console.log(data);
+      });
+    } else if (choice === 'A Parent') {
+      ajax(baseURI + '/parent', 'GET', {}).done((data) => {
+        console.log(data);
+      });
+    } else if (choice === 'A City Goer') {
+      ajax(baseURI + '/city-goer', 'GET', {}).done((data) => {
+        console.log(data);
       });
     }
+  }
 
+  componentDidMount() {
+    fetchTasks((data) => {
+        console.log(data);
+        this.setState({tasks: data.tasks});
+    });
+  }
 
   render() {
     return (
@@ -56,12 +76,12 @@ class Home extends Component {
           <Navigation />
           <div className="home">
             <div className="search-card-container">
-              <SearchCard />
+              <SearchCard handlePredefinedSearchQuery={this.handleSearchQuery}/>
             </div>
           </div>
         </div>
         <div className="about">
-                <About />
+            <About />
         </div>
       </div>
     );
