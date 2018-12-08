@@ -16,8 +16,7 @@ const ajax = function(uri, method, data) {
         accepts: "application/json",
         cache: false,
         crossDomain: true,
-        dataType: 'json',
-        data: JSON.stringify(data),
+        data: data,
         error: function(jqXHR) {
             console.log("ajax error " + jqXHR.status);
         }

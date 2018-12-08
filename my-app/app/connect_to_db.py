@@ -97,6 +97,26 @@ def get_boujee():
 
     return jsonify(set_to_return)
 
+@app.route('/advanced', methods=['GET'])
+def get_advanced():
+    print(request.args.get("employment"))
+    print(request.args.get("poverty"))
+    print(request.args.get("crime"))
+    print(request.args.get("housing"))
+
+
+    cur = connect_to_database()
+    query = """
+
+    """
+    cur.execute(query)
+    set_to_return = []
+    for result in cur:
+        set_to_return.append(result)
+
+    task = {"tasks": "tasks"}
+    return jsonify(task)
+
 def convert_tuples(list, di):
     for i in range(len(list)):
     # for a, b, c in tup:
