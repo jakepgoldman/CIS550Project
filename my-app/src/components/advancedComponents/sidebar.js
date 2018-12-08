@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Button, FormGroup, Label, Input } from "reactstrap";
+import { Card, Button, Form, FormGroup, Label, Input } from "reactstrap";
 import Slider from './slider';
 
 class Sidebar extends Component {
@@ -16,7 +16,8 @@ class Sidebar extends Component {
     this.submit = this.submit.bind(this);
 
     this.state = {
-      'radioButtonValue': ' '
+      'housingDropdownChoice': '',
+      'radioButtonValue': ' ',
     };
 
   }
@@ -86,6 +87,37 @@ class Sidebar extends Component {
     )
   }
 
+  handleHousingChange(e) {
+    const { target } = e;
+    const value = target.value;
+    console.log('Dropdown selected value:', value);
+    this.setState({
+      'housingDropdownChoice': value
+    });
+  }
+
+  /* Function to render the housing dropdown */
+  renderHousingDropdown = () => {
+    const { housingDropdownChoice } = this.state;
+    return (
+      <Form onSubmit={ (e) => this.submitForm(e) }>
+        <FormGroup>
+          <Input type="select" name="select" value={ housingDropdownChoice } onChange={ (e) => { this.handleHousingChange(e)} }>
+            <option>None</option>
+            <option>Decreased last year</option>
+            <option>Decreased 2 years in a row</option>
+            <option>Decreased 3 years in a row</option>
+            <option>Decreased 4 years in a row</option>
+            <option>Increased last year</option>
+            <option>Increased 2 years in a row</option>
+            <option>Increased 3 years in a row</option>
+            <option>Increased 4 years in a row</option>
+           </Input>
+        </FormGroup>
+      </Form>
+    )
+  }
+
   submit = (e) => {
     for (var [key, value] of this.sliderMap.entries()) {
       console.log(key + ' = ' + value);
@@ -103,6 +135,8 @@ class Sidebar extends Component {
           <br/>
           <h6> What geographic-level do you want to see? </h6>
           {this.renderRadioButtons()}
+          <br/>
+          {this.renderHousingDropdown()}
         </div>
         <br/>
         <div className="filter-panel-button">
