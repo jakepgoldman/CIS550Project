@@ -29,6 +29,14 @@ class FilterPanel extends Component {
     });
   }
 
+  renderFilterPanel() {
+    return(
+      <Form onSubmit={ (e) => this.submitForm(e)}>
+        <CheckboxPanel filters={filters} onChange={this.handleChange.bind(this)}/>
+      </Form>
+    );
+  }
+
   render() {
     const choice = this.props.choice
     const filters = this.props.filters
@@ -37,9 +45,7 @@ class FilterPanel extends Component {
         <br/>
         <h3 className="display-6 text-center">Your preferences:</h3>
         <br/>
-        <Form onSubmit={ (e) => this.submitForm(e)}>
-          <CheckboxPanel filters={filters} onChange={this.handleChange.bind(this)}/>
-        </Form>
+        {renderFilterPanel()}
         <br/>
         <Button onClick={(e) => {this.submitForm(e)}}> Update your results</Button>
       </Card>
