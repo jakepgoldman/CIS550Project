@@ -32,13 +32,40 @@ def get_tasks():
 @app.route('/explorer', methods=['GET'])
 def get_explorer():
     cur = connect_to_database()
-    # low precipitation, medium poverty, medium crime
-    cur.execute('')
+    # low precipitation, low housing cost
+    # query = 'WITH rain_check AS ( SELECT cbsaname FROM City WHERE precipitation IS NOT NULL) SELECT h.fips, AVG(fmr2) FROM rain_check r JOIN Map m ON r.cbsaname=m.cbsa_name JOIN Housing h ON h.fips=m.fips GROUP BY h.fips HAVING AVG(fmr2) < 800;'
+    cur.execute('with rain_check AS ( SELECT cbsaname FROM City WHERE precipitation IS NOT NULL) SELECT h.fips FROM rain_check r JOIN Map m ON r.cbsaname=m.cbsa_name JOIN Housing h ON h.fips=m.fips GROUP BY h.fips HAVING AVG(fmr2) < 800')
     set_to_return = []
     for result in cur:
         set_to_return.append(result)
 
     return jsonify(set_to_return)
+
+@app.route('/family', methods=['GET'])
+def get_family():
+    cur = connect_to_database()
+    # low precipitation, low housing cost
+    query = """
+        WITH smart_state AS (
+        SELECT state_abbr
+        FROM State
+        WHERE ROWNUM < 15
+        ORDER BY act_score DESC),
+        distinct_map AS (
+        SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map GROUP BY cbsa_name, state_abbr)
+
+        Select m.fips
+        FROM City c JOIN distinct_map m ON c.cbsaname=m.cbsa_name JOIN smart_state s ON s.state_abbr=m.state_abbr
+        WHERE ROWNUM < 6
+        ORDER BY c.crime_suburb
+    """
+    cur.execute(query)
+    set_to_return = []
+    for result in cur:
+        set_to_return.append(result)
+
+    return jsonify(set_to_return)
+
 
 def convert_tuples(list, di):
     for i in range(len(list)):
