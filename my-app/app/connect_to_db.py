@@ -169,9 +169,49 @@ def get_inner_function(sorted_values, i, table_map, index):
             """.format(attribute=table_map[sorted_values[i]], num_value=index[i], inner=get_inner_function(sorted_values, i, table_map, index))
 
 def get_housing_query(direction, value):
-    query = ""
     if value == 1:
-        query = """
+        return """
+            WITH HousingTrend AS (
+	            SELECT H2.fips
+	            FROM Housing H1 JOIN Housing H2
+	            ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
+	            WHERE change * H2.fmr2 > change * H1.fmr2
+                AND H2.year = 2019
+            )
+        """.format(change=direction)
+    elif value == 2:
+        return """
+            WITH HousingTrend AS (
+            	SELECT H3.fips
+            	FROM Housing H1
+            	JOIN Housing H2
+            	ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
+            	JOIN Housing H3
+            	ON H2.fips = H3.fips AND (H2.year + 1) = H3.year
+            	WHERE {change} * H2.fmr2 >= {change} * H1.fmr2
+            	AND {change} * H3.fmr2 >= {change} * H2.fmr2
+            	AND H3.year = 2019
+            )
+        """.format(change=direction)
+    elif value == 3:
+        return """
+            WITH HousingTrend AS (
+            	SELECT H4.fips
+            	FROM Housing H1
+            	JOIN Housing H2
+            	ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
+            	JOIN Housing H3
+            	ON H2.fips = H3.fips AND (H2.year + 1) = H3.year
+            	JOIN Housing H4
+            	ON H4.fips = H5.fips AND (H4.year + 1) = H5.year
+            	WHERE {change} * H2.fmr2 >= {change} * H1.fmr2
+            	AND {change} * H3.fmr2 >= {change} * H2.fmr2
+            	AND {change} * H4.fmr2 >= {change} * H3.fmr2
+            	AND H4.year = 2019
+            )
+        """.format(change=direction)
+    elif value == 4:
+        return """
             WITH HousingTrend AS (
             	SELECT H5.fips, H5.fmr2
             	FROM Housing H1
@@ -189,29 +229,7 @@ def get_housing_query(direction, value):
             	AND {change} * H5.fmr2 >= {change} * H4.fmr2
             	AND H5.year = 2019
             )
-            SELECT fips, fmr2 FROM HousingTrend WHERE ROWNUM < 6
-        """.format(change=housing_filter_direction)
-    elif value == 1:
-        query = """
-            WITH HousingTrend AS (
-            	SELECT H5.fips, H5.fmr2
-            	FROM Housing H1
-            	JOIN Housing H2
-            	ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
-            	JOIN Housing H3
-            	ON H2.fips = H3.fips AND (H2.year + 1) = H3.year
-            	JOIN Housing H4
-            	ON H3.fips = H4.fips AND (H3.year + 1) = H4.year
-            	JOIN Housing H5
-            	ON H4.fips = H5.fips AND (H4.year + 1) = H5.year
-            	WHERE {change} * H2.fmr2 >= {change} * H1.fmr2
-            	AND {change} * H3.fmr2 >= {change} * H2.fmr2
-            	AND {change} * H4.fmr2 >= {change} * H3.fmr2
-            	AND {change} * H5.fmr2 >= {change} * H4.fmr2
-            	AND H5.year = 2019
-            )
-            SELECT fips, fmr2 FROM HousingTrend WHERE ROWNUM < 6
-        """.format(change=housing_filter_direction)
+        """.format(change=direction)
 
 def convert_tuples(list, di):
     for i in range(len(list)):
