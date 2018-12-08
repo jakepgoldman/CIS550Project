@@ -1,4 +1,4 @@
-/* One screen-height's worth of the scrolling page */
+/* ADVANCED PAGE LAYOUT STYLES */
 .advanced-landing {
   width: "100%";
   height: stretch;
@@ -16,13 +16,15 @@
 .filter-panel-container {
   background-color: white;
   height: 100%;
-  width: 25%;
+  width: 20%;
 }
 
 .result-panel-container {
   background-color: white;
   flex: 1 0 auto;
 }
+
+/* RESULT PANEL STYLES */
 
 .result-panel {
   width: "100%";
@@ -31,19 +33,23 @@
   flex-flow: column;
 }
 
-
 .result-cards {
   display: flex;
   flex-flow: row;
   width: "100%";
   margin: auto;
+  text-align: center;
 }
 
-.belowCards {
-  margin: 0 1 auto;
-  background-color: yellow;
+.custom-card {
+  flex: 1 ;
 }
 
+.map-box {
+  padding: 5%;
+}
+
+/* SIDEBAR STYLES */
 .sidebar {
   height: 100%;
 }
