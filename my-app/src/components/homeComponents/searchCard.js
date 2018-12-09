@@ -1,4 +1,5 @@
 import React from 'react';
+import { Route } from 'react-router-dom';
 import { Card, Button, Form, FormGroup, Input } from 'reactstrap';
 import '../../styles/home.css'
 
@@ -6,15 +7,16 @@ class SearchCard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      'choice': '',
+      'choice': 'An Explorer', /* default */
     }
     this.handleChange = this.handleChange.bind(this);
     this.submitForm = this.submitForm.bind(this);
+    this.renderButton = this.renderButton.bind(this);
   }
 
-  submitForm(e) {
-    console.log(`Choice: ${ this.state.choice }`);
-    // Query
+  submitForm(history) {
+    this.props.handlePredefinedSearchQuery(this.state.choice);
+    history.push('/advanced');
   }
 
   handleChange(e) {
@@ -24,6 +26,14 @@ class SearchCard extends React.Component {
     this.setState({
       'choice': value
     });
+  }
+
+  renderButton = () => {
+    return (
+      <Route render={({ history}) => (
+        <Button onClick={() => {this.submitForm(history)}}> Start Looking!</Button>
+      )}/>
+    )
   }
 
   render() {
@@ -39,14 +49,13 @@ class SearchCard extends React.Component {
           <Input type="select" name="select" value={ choice } onChange={ (e) => { this.handleChange(e)} }>
             <option>An Explorer</option>
             <option>A Parent</option>
-            <option>Single</option>
             <option>A City-Goer</option>
             <option>Boujee</option>
             </Input>
           </FormGroup>
         </Form>
         <br/>
-        <Button onClick={(e) => {this.submitForm(e)}}> Start Looking!</Button>
+        {this.renderButton()}
       </Card>
     );
   }

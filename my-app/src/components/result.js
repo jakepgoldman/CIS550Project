@@ -8,6 +8,11 @@ import countyJson from './county.json';
 
 import '../styles/resultmap.css'
 import 'leaflet/dist/leaflet.css';
+import 'leaflet-defaulticon-compatibility';
+import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css';
+import 'geojson-polygon-center';
+
+var polygonCenter = require('geojson-polygon-center');
 
 type State = {
   lat: number,
@@ -16,10 +21,84 @@ type State = {
 }
 
 class Result extends Component {
-  state = {
-    lat: 51.505,
-    lng: -0.08,
-    zoom: 13,
+  constructor(props) {
+    super(props)
+    this.renderStateLayer = this.renderStateLayer.bind(this);
+    this.renderCountyLayer = this.renderCountyLayer.bind(this);
+    this.countyFill = this.countyFill.bind(this);
+    this.getColor = this.getColor.bind(this);
+    this.addMarker = this.addMarker.bind(this);
+    this.state = {
+      lat: 38,
+      lng: -98,
+      zoom: 3,
+      markers: this.addMarker(),
+    }
+  }
+
+  getCountyCenter(fips) {
+    var geometry = countyJson['features'].filter(
+      county =>
+        county['properties']['STATE']==fips.toString().slice(0, 2) &&
+        county['properties']['COUNTY']==fips.toString().slice(2, 5)
+    )[0]['geometry'];
+    var center = polygonCenter(geometry)['coordinates'];
+    if (geometry['type'] === 'MultiPolygon') {
+      // center = polygonCenter(geometry)['coordinates'][0];
+      var coords = geometry['coordinates'][0];
+      var newGeo = {
+        'type': 'Polygon',
+        'coordinates': coords
+      }
+      center = polygonCenter(newGeo)['coordinates'];
+    }
+    var newCenter = [center[1], center[0]];
+    return newCenter;
+  }
+
+  addMarker = () => {
+    const markers = [];
+    this.props.counties.map((county) => {markers.push(this.getCountyCenter(county))});
+    return markers;
+  }
+
+  getColor(state, county) {
+    var fips = state + county;
+    return this.props.counties.includes(fips) ? '#BC98D6' : ''
+  }
+
+  getFillOpacity(state, county) {
+    var fips = state + county;
+    return this.props.counties.includes(fips) ? 0.7 : 0
+  }
+
+  countyFill(feature) {
+    return ({
+        fillColor: this.getColor(feature.properties.STATE, feature.properties.COUNTY),
+        weight: 0.1,
+        opacity: 1,
+        dashArray: '3',
+        fillOpacity: this.getFillOpacity(feature.properties.STATE, feature.properties.COUNTY),
+        color: 'white'
+      })
+  }
+
+  renderStateLayer() {
+    const shouldDisplayState = this.props.shouldDisplayState;
+    if (shouldDisplayState) {
+      return(
+        <GeoJSON data={stateJson} />
+      )
+    }
+  }
+
+  renderCountyLayer() {
+    const shouldDisplayCounty = this.props.shouldDisplayCounty;
+    if (shouldDisplayCounty) {
+      return(
+        <GeoJSON data={countyJson} style={this.countyFill}/>
+      )
+    }
   }
 
   render() {
@@ -28,16 +107,18 @@ class Result extends Component {
     const shouldDidsplayCounty = this.props.shouldDisplayCounty;
     return (
         <div>
-          <Map center={position} zoom={13} height={400}>
+          <Map center={position}
+               zoom={this.state.zoom}
+               height={400}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
             />
-            <GeoJSON data={stateJson} />
-            <GeoJSON data={countyJson} />
-            <Marker position={position}>
-              <Popup>A pretty CSS3 popup.<br />Easily customizable.</Popup>
-            </Marker>
+            {this.state.markers.map((position, idx) =>
+              <Marker key={`marker-${idx}`} position={position} />
+            )}
+            // {this.renderStateLayer()}
+            {this.renderCountyLayer()}
           </Map>
       </div>
     );
