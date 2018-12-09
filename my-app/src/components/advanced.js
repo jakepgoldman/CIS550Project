@@ -51,9 +51,9 @@ class Advanced extends Component {
   }
 
   handleSearchQuery(json) {
-    console.log("RESULT1:")
-    console.log(this.state.resultFips)
-    console.log(this.state.displayResult)
+    // console.log("RESULT1:")
+    // console.log(this.state.resultFips)
+    // console.log(this.state.displayResult)
     console.log(json)
     ajax(advancedURI, 'GET', json).done((data) => {
       this.setState({
@@ -61,9 +61,9 @@ class Advanced extends Component {
         'displayResult': true
       });
     }, () => {
-      console.log("RESULT3:")
-      console.log(this.state.resultFips)
-      console.log(this.state.displayResult)
+      // console.log("RESULT3:")
+      // console.log(this.state.resultFips)
+      // console.log(this.state.displayResult)
     });
   }
 
@@ -90,7 +90,7 @@ class Advanced extends Component {
     }
     console.log("RESULT2:")
     console.log(this.state.resultFips)
-    console.log(this.state.displayResult)
+    // console.log(this.state.displayResult)
     return (
         <div className="advanced-landing page">
             <Navigation />

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardTitle, CardText, Button, ListGroup, ListGroupItem } from "reactstrap";
+import { Card, CardTitle, CardText, Button, ListGroup, ListGroupItem, Badge } from "reactstrap";
 import Map from "../result.js"
 import countyJson from '../county.json';
 import stateJson from '../state.json';
@@ -20,7 +20,6 @@ class ResultPanel extends Component {
   }
 
   componentWillReceiveProps(props) {
-    console.log(props)
     const geoLevel = this.props.geoLevel;
     this.setState({'geoLevel': geoLevel});
   }
@@ -114,7 +113,7 @@ class ResultPanel extends Component {
       this.props.results.map((result) => {
         return (
           <ListGroupItem key={result.fips}>
-            {this.convertFipsToCountyName(result.fips)} County, {this.convertFipsToStateName(result.fips)}
+            {this.convertFipsToCountyName(result.fips)} County, {this.convertFipsToStateName(result.fips)} <Badge pill>{result.top_attribute}</Badge>
           </ListGroupItem>
         )
       })

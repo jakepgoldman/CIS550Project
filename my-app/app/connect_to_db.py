@@ -220,7 +220,6 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
             sorted_values.append(key)
 
     sorted_values = list(reversed(sorted_values))
-    print(sorted_values)
 
     # poverty, unemployment - county, crime - city, housing - housing, education - state
     table_map = {
