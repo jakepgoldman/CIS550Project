@@ -5,7 +5,7 @@ import Slider from './slider';
 class Sidebar extends Component {
   constructor(props) {
     super(props);
-    this.sliderNames = ["Employment", "Poverty", "Education", "Crime", "Cheap Housing"];
+    this.sliderNames = ["Good Job Prospects", "Affluent Neighbors", "Good Education", "Public Safety", "Affordable Housing"];
     this.radioButtonNames = ["By State", "By County"];
 
     this.updateSliders = this.updateSliders.bind(this);
@@ -180,11 +180,11 @@ class Sidebar extends Component {
           <h6>How important are the follwing attributes to you? </h6>
           {this.renderSliders()}
           <br/>
-          <h6>What geographic-level would you like to see? </h6>
-          {this.renderRadioButtons()}
-          <br/>
           <h6>What housing trends would you like to see?</h6>
           {this.renderHousingDropdown()}
+          <br/>
+          <h6>What geographic-level would you like to see? </h6>
+          {this.renderRadioButtons()}
         </div>
         <br/>
         <div className="filter-panel-button">
