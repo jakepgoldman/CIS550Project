@@ -37,6 +37,7 @@ class Advanced extends Component {
       'geoLevel': level
     }, () => {this.render()});
   }
+  
   handleSearchQuery(json) {
     ajax(advancedURI, 'GET', json).done((data) => {
       console.log(data);

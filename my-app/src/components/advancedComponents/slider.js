@@ -7,7 +7,7 @@ class SimpleSlider extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      value: 50,
+      value: 0,
     }
     this.handleSliderChange.bind(this);
   }

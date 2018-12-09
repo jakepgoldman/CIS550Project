@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Card, Button, Form, FormGroup, Label, Input } from "reactstrap";
+import { Card, Button, Form, FormGroup, Label, Input, Popover, PopoverHeader, PopoverBody } from "reactstrap";
 import Slider from './slider';
 
 class Sidebar extends Component {
   constructor(props) {
     super(props);
-    this.sliderNames = ["employment", "poverty", "education", "crime", "housing"];
+    this.sliderNames = ["Employment", "Poverty", "Education", "Crime", "Cheap Housing"];
     this.radioButtonNames = ["By State", "By County"];
 
     this.updateSliders = this.updateSliders.bind(this);
@@ -14,10 +14,12 @@ class Sidebar extends Component {
     this.renderRadioButtons = this.renderRadioButtons.bind(this);
 
     this.submit = this.submit.bind(this);
+    this.showPopover = this.showPopover.bind(this);
 
     this.state = {
       'housingDropdownChoice': 'None',
       'radioButtonValue': ' ',
+      'popoverOpen': false
     };
 
   }
@@ -28,7 +30,7 @@ class Sidebar extends Component {
     this.radioButtonSet = new Set();
 
     this.sliderNames.map((sliderName) => {
-      return (this.sliderMap.set(sliderName, 50));
+      return (this.sliderMap.set(sliderName, 0));
     })
   }
 
@@ -116,7 +118,30 @@ class Sidebar extends Component {
     )
   }
 
+  showPopover = () => {
+    console.log('here')
+    var allZero = true
+    for (var item of this.sliderMap.values()) {
+      console.log(item)
+      if (item !== 0) {
+        allZero =  false
+      }
+    }
+    console.log(allZero)
+    return allZero;
+  }
+
   submit = (e) => {
+    if (this.showPopover()) {
+      this.setState({
+        'popoverOpen': true
+      });
+      return;
+    } else {
+      this.setState({
+        'popoverOpen': false
+      });
+    }
     var jsonData = {};
     for (var [key, value] of this.sliderMap.entries()) {
       jsonData[key] = value;
@@ -163,7 +188,11 @@ class Sidebar extends Component {
         </div>
         <br/>
         <div className="filter-panel-button">
-          <Button style={{width:'100%'}} onClick={this.submit}>Go!</Button>
+          <Button id='submit-button' style={{width:'100%'}} onClick={this.submit}>Go!</Button>
+          <Popover placement="bottom" isOpen={this.state.popoverOpen} target='submit-button'>
+            <PopoverHeader>Update the filters!</PopoverHeader>
+          <PopoverBody>You definitely care about one of those attributes more than the rest!</PopoverBody>
+        </Popover>
         </div>
       </Card>
     )
