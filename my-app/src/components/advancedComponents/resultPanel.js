@@ -130,7 +130,6 @@ class ResultPanel extends Component {
   }
 
   render() {
-    const
     if (this.state.geoLevel === 'By County' || this.state.geoLevel === ' ') {
       return (
           <div >
