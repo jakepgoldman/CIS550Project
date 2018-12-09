@@ -29,6 +29,7 @@ class Advanced extends Component {
     this.state = {
       'displayResult': false,
       'geoLevel': 'By County',
+      'resultFips': []
     }
     this.updateGeoLevel = this.updateGeoLevel.bind(this);
   }
@@ -37,18 +38,19 @@ class Advanced extends Component {
       'geoLevel': level
     }, () => {this.render()});
   }
-  
+
   handleSearchQuery(json) {
     ajax(advancedURI, 'GET', json).done((data) => {
       console.log(data);
+      this.setState({'resultFips': data});
     });
     console.log(json);
   }
 
   render() {
     const resultFips = [
-      {'number':1, 'fips': '32007'},
-      {'number':2, 'fips': '56013'},
+      {'rank':1, 'fips': '26163'},
+      {'rank':2, 'fips': '25025'},
     ];
     return (
         <div className="advanced-landing page">
