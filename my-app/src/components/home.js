@@ -5,6 +5,7 @@ import { Route, Switch } from 'react-router-dom';
 import Navigation from "./navigation";
 import SearchCard from "./homeComponents/searchCard";
 import About from "./homeComponents/about";
+import ResultPanel from "./advancedComponents/resultPanel";
 
 import $ from 'jquery';
 const baseURI = 'http://localhost:5000'
@@ -36,39 +37,47 @@ class Home extends Component {
     }
 
     this.handleSearchQuery = this.handleSearchQuery.bind(this);
-    // this.routeToAdvancedWithData = this.routeToAdvancedWithData.bind(this);
   }
 
   handleSearchQuery(choice) {
     console.log(`Choice: ${choice}`)
+    var uri = ""
     if (choice === 'An Explorer') {
-      ajax(baseURI + '/explorer', 'GET', {}).done((data) => {
-        // routeToAdvancedWithData(data);
-      });
+      uri = baseURI + '/explorer'
     } else if (choice === 'Boujuee') {
-      ajax(baseURI + '/boujee', 'GET', {}).done((data) => {
-        // routeToAdvancedWithData(data);
-      });
+      uri = baseURI + '/boujee'
     } else if (choice === 'A Parent') {
-      ajax(baseURI + '/family', 'GET', {}).done((data) => {
-        // routeToAdvancedWithData(data);
-      });
+      uri = baseURI + '/family'
     } else if (choice === 'A City Goer') {
-      ajax(baseURI + '/citygoer', 'GET', {}).done((data) => {
-        // routeToAdvancedWithData(data);
-      });
+      uri = baseURI + '/citygoer'
     } else if (choice === 'A Crime Lord') {
-      ajax(baseURI + '/crimelord', 'GET', {}).done((data) => {
-        // routeToAdvancedWithData(data);
-      });
+      uri = baseURI + '/crimelord'
     }
-  }
 
-  routeToAdvancedWithData(data) {
-    this.setState({
-      'hasQueryResult': true,
-      'queryResult': data
+    ajax(uri, 'GET', {}).done((data) => {
+      this.setState({
+        'hasQueryResult': true,
+        'resultData': data
+      });
     });
+
+    // var fakeData = [
+    //   {
+    //     'rank': 1,
+    //     'fips': 5035,
+    //     'cbsaname': "Memphis, TN-MS-AR",
+    //   },
+    //   {
+    //     'rank': 2,
+    //     'fips': 4021,
+    //     'cbsaname': "Phoenix-Mesa-Scottsdale, AZ",
+    //   },
+    //   {
+    //     'rank': 3,
+    //     'fips': 6111,
+    //     'cbsaname': "Oxnard-Thousand Oaks-Ventura, CA",
+    //   }
+    // ]
   }
 
   render() {
@@ -89,14 +98,14 @@ class Home extends Component {
         </div>
       );
     } else {
-      // return (
-      //   <Router>
-      //       <Switch>
-      //           <Route exact path='/' component={Home} />
-      //           <Route path='/advanced' render={(props) => {<Advanced {...props} queryResult={this.state.queryResult}/>}} />
-      //       </Switch>
-      //   </Router>
-      // );
+      return (
+        <div className="page">
+          <Navigation />
+          <div className="result-panel-container">
+            <ResultPanel results={this.state.resultData}/>
+          </div>
+        </div>
+      )
     }
 
   }
