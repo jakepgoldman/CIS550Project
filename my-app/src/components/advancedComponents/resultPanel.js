@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardTitle, CardText, Button, Row, Col } from "reactstrap";
+import { Card, CardTitle, CardText, Button, ListGroup, ListGroupItem } from "reactstrap";
 import Map from "../result.js"
 import countyJson from '../county.json';
 import stateJson from '../state.json';
@@ -10,6 +10,8 @@ class ResultPanel extends Component {
     this.positions = ["first", "second", "third"];
     this.renderCards = this.renderCards.bind(this);
     this.renderMap = this.renderMap.bind(this);
+    this.renderStateResults = this.renderStateResults.bind(this);
+    this.renderStateResultPanel = this.renderStateResultPanel.bind(this);
     // this.refreshMap = this.refreshMap.bind(this);
 
     this.state = {
@@ -84,15 +86,46 @@ class ResultPanel extends Component {
     )
   }
 
-  render() {
+  renderStateResults() {
     return (
-        <div >
-          <div className='result-cards'>
-            {this.renderCards()}
+      this.props.results.map((result) => {
+        return (
+          <ListGroupItem key={result.fips}>
+            {this.convertFipsToCountyName(result.fips)} County, {this.convertFipsToStateName(result.fips)}
+          </ListGroupItem>
+        )
+      })
+    )
+  }
+
+  renderStateResultPanel() {
+    return (
+      <ListGroup>
+        {this.renderStateResults()}
+      </ListGroup>
+    )
+  }
+
+  render() {
+    if (this.state.geoLevel === 'By County') {
+      return (
+          <div >
+            <div className='result-cards'>
+              {this.renderCards()}
+            </div>
+            {this.renderMap()}
           </div>
-          {this.renderMap()}
-        </div>
-    );
+      );
+    } else if (this.state.geoLevel === 'By State') {
+      return (
+          <div >
+            {this.renderMap()}
+            <div style={{overflow: 'auto', 'max-height': '200px', 'padding':'1%','background-color': '#f2f2f2'}}>
+            {this.renderStateResultPanel()}
+            </div>
+          </div>
+      );
+    }
   }
 }
 

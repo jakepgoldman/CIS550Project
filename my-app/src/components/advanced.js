@@ -51,6 +51,14 @@ class Advanced extends Component {
     const resultFips = [
       {'rank':1, 'fips': '26163'},
       {'rank':2, 'fips': '25025'},
+      {'rank':3, 'fips': '26163'},
+      {'rank':4, 'fips': '25025'},
+      {'rank':5, 'fips': '26163'},
+      {'rank':6, 'fips': '25025'},
+      {'rank':7, 'fips': '26163'},
+      {'rank':8, 'fips': '25025'},
+      {'rank':9, 'fips': '26163'},
+      {'rank':10, 'fips': '25025'},
     ];
     return (
         <div className="advanced-landing page">
