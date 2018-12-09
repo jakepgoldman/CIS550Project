@@ -45,7 +45,7 @@ def get_explorer():
     for result in cur:
         set_to_return.append(result)
 
-    return jsonify(set_to_return)
+    return format_result(set_to_return)
 
 @app.route('/family', methods=['GET'])
 def get_family():
@@ -70,7 +70,7 @@ def get_family():
     for result in cur:
         set_to_return.append(result)
 
-    return jsonify(set_to_return)
+    return format_result(set_to_return)
 
 @app.route('/boujee', methods=['GET'])
 def get_boujee():
@@ -95,7 +95,7 @@ def get_boujee():
     for result in cur:
         set_to_return.append(result)
 
-    return jsonify(set_to_return)
+    return format_result(set_to_return)
 
 @app.route('/citygoer', methods=['GET'])
 def get_citygoer():
@@ -113,14 +113,14 @@ def get_citygoer():
         Select m.fips, lc.cbsaname
         FROM low_crime lc JOIN distinct_map m ON lc.cbsaname=m.cbsa_name
         WHERE ROWNUM < 6
-        ORDER BY lc.crime_city;
+        ORDER BY lc.crime_city
     """
     cur.execute(query)
     set_to_return = []
     for result in cur:
         set_to_return.append(result)
 
-    return jsonify(set_to_return)
+    return format_result(set_to_return)
 
 @app.route('/crimelord', methods=['GET'])
 def get_crimelord():
@@ -143,14 +143,25 @@ def get_crimelord():
         Select m.fips, hc.cbsaname
         FROM high_crime hc JOIN distinct_map m ON hc.cbsaname=m.cbsa_name JOIN high_poverty hp ON m.fips=hp.fips
         WHERE ROWNUM < 6
-        ORDER BY hc.crime_city, hp.poverty_percent DESC;
+        ORDER BY hc.crime_city, hp.poverty_percent DESC
     """
     cur.execute(query)
     set_to_return = []
     for result in cur:
         set_to_return.append(result)
 
-    return jsonify(set_to_return)
+    return format_result(set_to_return)
+
+def format_result(set_to_return):
+    formatted_result = []
+    i = 0
+    for i in range(len(set_to_return)):
+        formatted_result.append({
+            'rank': i + 1,
+            'fips': set_to_return[i][0],
+            'cbsaname': set_to_return[i][1],
+        })
+    return jsonify(formatted_result)
 
 @app.route('/advanced', methods=['GET'])
 def get_advanced():

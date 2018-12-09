@@ -15,7 +15,7 @@ class SimpleSlider extends Component {
   handleSliderChange = (event, value) => {
     this.setState({ value });
     this.props.onChange(event, value);
-  };
+  }
 
   render() {
     const label = this.props.label;
