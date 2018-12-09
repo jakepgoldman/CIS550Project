@@ -46,7 +46,7 @@ class ResultPanel extends Component {
     console.log();
     return (
         this.props.results.map((result) => {
-        var title = "Your " + this.positions[result.number - 1] + " choice:"
+        var title = "Your " + this.positions[result.rank - 1] + " choice:"
         return (
           <div key={result.fips} className='custom-card'>
             <Card body>
