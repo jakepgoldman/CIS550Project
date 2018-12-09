@@ -51,6 +51,7 @@ class SearchCard extends React.Component {
             <option>A Parent</option>
             <option>A City-Goer</option>
             <option>Boujee</option>
+            <option>A Crime Lord</option>
             </Input>
           </FormGroup>
         </Form>

@@ -52,11 +52,15 @@ class Home extends Component {
         console.log(data);
       });
     } else if (choice === 'A Parent') {
-      ajax(baseURI + '/parent', 'GET', {}).done((data) => {
+      ajax(baseURI + '/family', 'GET', {}).done((data) => {
         console.log(data);
       });
     } else if (choice === 'A City Goer') {
-      ajax(baseURI + '/city-goer', 'GET', {}).done((data) => {
+      ajax(baseURI + '/citygoer', 'GET', {}).done((data) => {
+        console.log(data);
+      });
+    } else if (choice === 'A Crime Lord') {
+      ajax(baseURI + '/crimelord', 'GET', {}).done((data) => {
         console.log(data);
       });
     }
