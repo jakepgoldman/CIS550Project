@@ -52,7 +52,6 @@ class Result extends Component {
     )[0]['geometry'];
     var center = polygonCenter(geometry)['coordinates'];
     if (geometry['type'] === 'MultiPolygon') {
-      // center = polygonCenter(geometry)['coordinates'][0];
       var coords = geometry['coordinates'][0];
       var newGeo = {
         'type': 'Polygon',
@@ -95,7 +94,7 @@ class Result extends Component {
     const shouldDisplayState = this.props.shouldDisplayState;
     if (shouldDisplayState) {
       return (
-        <GeoJSON data={stateJson} />
+        <GeoJSON data={countyJson} style={this.countyFill}/>
       )
     }
   }
@@ -112,7 +111,7 @@ class Result extends Component {
   render() {
     const position = [this.state.lat, this.state.lng]
     const shouldDisplayState = this.props.shouldDisplayState;
-    const shouldDidsplayCounty = this.props.shouldDisplayCounty;
+    const shouldDisplayCounty = this.props.shouldDisplayCounty;
     return (
         <div>
           <Map center={position}

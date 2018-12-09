@@ -54,6 +54,7 @@ class Advanced extends Component {
     console.log("RESULT1:")
     console.log(this.state.resultFips)
     console.log(this.state.displayResult)
+    console.log(json)
     ajax(advancedURI, 'GET', json).done((data) => {
       this.setState({
         'resultFips': data,

@@ -217,7 +217,8 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
         if int(value) > 0:
             sorted_values.append(key)
 
-    sorted_values = list(reversed(sorted_values))
+    # sorted_values = list(reversed(sorted_values))
+    print(sorted_values)
 
     # poverty, unemployment - county, crime - city, housing - housing, education - state
     table_map = {
@@ -252,7 +253,7 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
             SELECT fips, cbsa_name, state_name, {attribute} FROM (
                 SELECT final.*, ROW_NUMBER() OVER (PARTITION BY state_name ORDER BY {attribute} {sort}) AS rFinal
                 FROM ({inner_query}) final
-            ) WHERE rFinal = 1
+            ) WHERE rFinal = 1 AND fips IS NOT NULL
             """.format(inner_query=inner_query, attribute=attribute, sort=sort)
     else:
         return """
