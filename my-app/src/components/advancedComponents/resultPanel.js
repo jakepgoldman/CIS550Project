@@ -7,7 +7,7 @@ import stateJson from '../state.json';
 class ResultPanel extends Component {
   constructor(props) {
     super(props)
-    this.positions = ["first", "second", "third"];
+    this.positions = ["First", "Second", "Third"];
     this.renderCards = this.renderCards.bind(this);
     this.renderMap = this.renderMap.bind(this);
     this.renderStateResults = this.renderStateResults.bind(this);
@@ -45,21 +45,39 @@ class ResultPanel extends Component {
   }
 
   renderCards() {
-    console.log();
+    var result1 = this.props.results[0];
+    var title1 = "Your " + this.positions[result1.rank -1] + " Choice"
+    var result2 = this.props.results[1];
+    var title2 = "Your " + this.positions[result2.rank -1] + " Choice"
+    var result3 = this.props.results[2];
+    var title3 = "Your " + this.positions[result3.rank -1] + " Choice"
     return (
-        this.props.results.map((result) => {
-        var title = "Your " + this.positions[result.rank - 1] + " choice:"
-        return (
-          <div key={result.fips} className='custom-card'>
-            <Card body>
-              <CardTitle tag='h4'> {title} </CardTitle>
-              <CardText>
-                {this.convertFipsToCountyName(result.fips)} County, {this.convertFipsToStateName(result.fips)}
-              </CardText>
-            </Card>
-          </div>
-        )
-      })
+      <div className='result-cards'>
+        <div key={result1.fips} className='custom-card'>
+          <Card body>
+            <CardTitle tag='h4'> {title1} </CardTitle>
+            <CardText>
+              {this.convertFipsToCountyName(result1.fips)} County, {this.convertFipsToStateName(result1.fips)}
+            </CardText>
+          </Card>
+        </div>
+        <div key={result2.fips} className='custom-card'>
+          <Card body>
+            <CardTitle tag='h4'> {title2} </CardTitle>
+            <CardText>
+              {this.convertFipsToCountyName(result2.fips)} County, {this.convertFipsToStateName(result2.fips)}
+            </CardText>
+          </Card>
+        </div>
+        <div key={result3.fips} className='custom-card'>
+          <Card body>
+            <CardTitle tag='h4'> {title3} </CardTitle>
+            <CardText>
+              {this.convertFipsToCountyName(result3.fips)} County, {this.convertFipsToStateName(result3.fips)}
+            </CardText>
+          </Card>
+        </div>
+      </div>
     )
   }
 
@@ -110,9 +128,8 @@ class ResultPanel extends Component {
     if (this.state.geoLevel === 'By County') {
       return (
           <div >
-            <div className='result-cards'>
-              {this.renderCards()}
-            </div>
+
+            {this.renderCards()}
             {this.renderMap()}
           </div>
       );
