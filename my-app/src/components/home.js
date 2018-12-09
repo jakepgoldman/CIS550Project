@@ -37,7 +37,6 @@ class Home extends Component {
     }
 
     this.handleSearchQuery = this.handleSearchQuery.bind(this);
-    // this.routeToAdvancedWithData = this.routeToAdvancedWithData.bind(this);
   }
 
   handleSearchQuery(choice) {
@@ -54,33 +53,31 @@ class Home extends Component {
     } else if (choice === 'A Crime Lord') {
       uri = baseURI + '/crimelord'
     }
-    // ajax(uri, 'GET', {}).done((data) => {
-    //   // routeToAdvancedWithData(data);
-    //
-    // });
 
-    var fakeData = [
-      {
-        'rank': 1,
-        'fips': 5035,
-        'cbsaname': "Memphis, TN-MS-AR",
-      },
-      {
-        'rank': 2,
-        'fips': 4021,
-        'cbsaname': "Phoenix-Mesa-Scottsdale, AZ",
-      },
-      {
-        'rank': 3,
-        'fips': 6111,
-        'cbsaname': "Oxnard-Thousand Oaks-Ventura, CA",
-      }
-    ]
-
-    this.setState({
-      'hasQueryResult': true,
-      'resultData': fakeData
+    ajax(uri, 'GET', {}).done((data) => {
+      this.setState({
+        'hasQueryResult': true,
+        'resultData': data
+      });
     });
+
+    // var fakeData = [
+    //   {
+    //     'rank': 1,
+    //     'fips': 5035,
+    //     'cbsaname': "Memphis, TN-MS-AR",
+    //   },
+    //   {
+    //     'rank': 2,
+    //     'fips': 4021,
+    //     'cbsaname': "Phoenix-Mesa-Scottsdale, AZ",
+    //   },
+    //   {
+    //     'rank': 3,
+    //     'fips': 6111,
+    //     'cbsaname': "Oxnard-Thousand Oaks-Ventura, CA",
+    //   }
+    // ]
   }
 
   render() {
@@ -101,14 +98,6 @@ class Home extends Component {
         </div>
       );
     } else {
-      // return (
-      //   <Router>
-      //       <Switch>
-      //           <Route exact path='/' component={Home} />
-      //           <Route path='/advanced' render={(props) => {<Advanced {...props} queryResult={this.state.queryResult}/>}} />
-      //       </Switch>
-      //   </Router>
-      // );
       return (
         <div className="page">
           <Navigation />
