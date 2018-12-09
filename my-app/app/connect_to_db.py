@@ -174,6 +174,8 @@ def get_advanced():
         "education": request.args.get("Good Education")
     }
 
+    print(values)
+
     housing_filter_direction = request.args.get("housing_filter_direction")
     housing_filter_value = request.args.get("housing_filter_value")
     group_by_state = request.args.get("return_by_state") == 'true'
@@ -217,7 +219,7 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
         if int(value) > 0:
             sorted_values.append(key)
 
-    # sorted_values = list(reversed(sorted_values))
+    sorted_values = list(reversed(sorted_values))
     print(sorted_values)
 
     # poverty, unemployment - county, crime - city, housing - housing, education - state
