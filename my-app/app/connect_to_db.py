@@ -110,8 +110,9 @@ def get_advanced():
 
     housing_filter_direction = request.args.get("housing_filter_direction")
     housing_filter_value = request.args.get("housing_filter_value")
+    group_by_state = request.args.get("return_by_state") == 'true'
 
-    query = get_optimal_query(values, housing_filter_direction, housing_filter_value)
+    query = get_optimal_query(values, housing_filter_direction, housing_filter_value, group_by_state)
     print(query)
 
     cur = connect_to_database()
@@ -122,17 +123,29 @@ def get_advanced():
         set_to_return.append(result)
 
     formatted_result = []
-    for i in range(len(set_to_return)):
-        formatted_result.append({
-            'rank': i + 1,
-            'fips': set_to_return[i][0],
-            'cbsaname': set_to_return[i][1],
-            'top_attribute': set_to_return[i][2]
-        })
+    if group_by_state:
+        for i in range(len(set_to_return)):
+            formatted_result.append({
+                'rank': 1,
+                'fips': set_to_return[i][0],
+                'cbsaname': set_to_return[i][1],
+                'state': set_to_return[i][2],
+                'top_attribute': set_to_return[i][3]
+            })
+    else:
+        for i in range(len(set_to_return)):
+            formatted_result.append({
+                'rank': i + 1,
+                'fips': set_to_return[i][0],
+                'cbsaname': set_to_return[i][1],
+                'state': set_to_return[i][2],
+                'top_attribute': set_to_return[i][3]
+            })
+
     print(formatted_result)
     return jsonify(formatted_result)
 
-def get_optimal_query(values, direction, housing_value):
+def get_optimal_query(values, direction, housing_value, group_by_state):
     sorted_values = []
     for key, value in sorted(values.items(), key=lambda x: x[1]):
         if int(value) > 0:
@@ -149,21 +162,44 @@ def get_optimal_query(values, direction, housing_value):
         "education": "act_score"
     }
 
+    asc_map = {
+        "crime": "ASC",
+        "employment": "ASC",
+        "poverty": "ASC",
+        "housing": "ASC",
+        "education": "DESC"
+    }
+
     # Select and order, select and order, at end order by them all
     index = [101, 76, 51, 25, 6]
     isHousingFilter = int(direction) != 0
 
     # Iterate through sorted_values, for each value, find table in table_map correspond to number. If act - add DESC
-    inner_query = get_inner_function(sorted_values, len(sorted_values), table_map, index, direction, housing_value);
-    sorted_query = """
-        WITH distinct_map AS (
-            SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr
-        )
-        SELECT fips, cbsa_name, {attribute} FROM ({inner_query}) WHERE ROWNUM < 4 ORDER BY {attribute}
-        """.format(inner_query=inner_query, attribute=table_map[sorted_values[0]])
-    return sorted_query
+    inner_query = get_inner_function(sorted_values, len(sorted_values), table_map, asc_map, index, direction, housing_value, group_by_state);
+    attribute = table_map[sorted_values[0]]
+    sort = asc_map[sorted_values[0]]
+    if group_by_state:
+        return """
+            WITH distinct_map AS (
+                SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr
+            )
+            SELECT fips, cbsa_name, state_name, {attribute} FROM (
+                SELECT final.*, ROW_NUMBER() OVER (PARTITION BY state_name ORDER BY {attribute} {sort}) AS rFinal
+                FROM ({inner_query}) final
+            ) WHERE rFinal = 1
+            """.format(inner_query=inner_query, attribute=attribute, sort=sort)
+    else:
+        return """
+            WITH distinct_map AS (
+                SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr
+            )
+            SELECT fips, cbsa_name, state_name, {attribute}
+            FROM ({inner_query})
+            WHERE ROWNUM < 4 AND {attribute} IS NOT NULL
+            ORDER BY {attribute} {sort}
+            """.format(inner_query=inner_query, attribute=attribute, sort=sort)
 
-def get_inner_function(sorted_values, i, table_map, index, direction, value):
+def get_inner_function(sorted_values, i, table_map, asc_map, index, direction, value, group_by_state):
     i = i - 1;
     if i < 0:
         housing_clause = ""
@@ -178,9 +214,25 @@ def get_inner_function(sorted_values, i, table_map, index, direction, value):
             LEFT JOIN Housing h ON h.fips=m.fips AND h.year = 2019
             """ + housing_clause
     else:
-        return """
-            SELECT * FROM ({inner}) WHERE ROWNUM < {num_value} ORDER BY {attribute}
-            """.format(attribute=table_map[sorted_values[i]], num_value=index[i], inner=get_inner_function(sorted_values, i, table_map, index, direction, value))
+        attribute = table_map[sorted_values[i]]
+        sort = asc_map[sorted_values[i]]
+        inner_query = get_inner_function(sorted_values, i, table_map, asc_map, index, direction, value, group_by_state)
+        null_clause = ""
+        if group_by_state:
+            if i == 0:
+                null_clause = "WHERE {attribute} IS NOT NULL".format(attribute=attribute)
+            return """
+                SELECT * FROM (
+                    SELECT a{i}.*, RANK() OVER (PARTITION BY state_name ORDER BY {attribute} {sort}) AS rank{i}
+                    FROM ({inner}) a{i} {null_clause}
+                ) WHERE rank{i} < {num_value}
+                """.format(attribute=attribute, num_value=index[i], i=i, inner=inner_query, sort=sort, null_clause=null_clause)
+        else:
+            if i == 0:
+                null_clause = "AND {attribute} IS NOT NULL".format(attribute=attribute)
+            return """
+                SELECT * FROM ({inner}) WHERE ROWNUM < {num_value} {null_clause} ORDER BY {attribute} {sort}
+                """.format(attribute=attribute, num_value=index[i], inner=inner_query, sort=sort, null_clause=null_clause)
 
 def get_housing_query(direction, value):
     value = int(value)
