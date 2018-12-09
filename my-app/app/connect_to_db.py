@@ -149,18 +149,18 @@ def get_crimelord():
     set_to_return = []
     for result in cur:
         set_to_return.append(result)
-        
+
     return jsonify(set_to_return)
 
 @app.route('/advanced', methods=['GET'])
 def get_advanced():
     # poverty, unemployment - county, crime - city, housing - housing, education - state
     values = {
-        "crime": request.args.get("crime"),
-        "employment": request.args.get("employment"),
-        "poverty": request.args.get("poverty"),
-        "housing": request.args.get("housing"),
-        "education": request.args.get("education")
+        "crime": request.args.get("Public Safety"),
+        "employment": request.args.get("Good Job Prospects"),
+        "poverty": request.args.get("Affluent Neighbors"),
+        "housing": request.args.get("Affordable Housing"),
+        "education": request.args.get("Good Education")
     }
 
     housing_filter_direction = request.args.get("housing_filter_direction")

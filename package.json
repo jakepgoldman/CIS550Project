@@ -19,7 +19,9 @@
   "dependencies": {
     "@material-ui/core": "^3.6.1",
     "@material-ui/lab": "^3.0.0-alpha.24",
+    "geojson-polygon-center": "0.0.0",
     "leaflet": "^1.3.4",
+    "leaflet-defaulticon-compatibility": "^0.1.1",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-leaflet": "^2.1.2",
