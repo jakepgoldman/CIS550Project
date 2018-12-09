@@ -146,7 +146,7 @@ class Sidebar extends Component {
     for (var [key, value] of this.sliderMap.entries()) {
       jsonData[key] = value;
     }
-    jsonData['return_by_state'] = this.state.radioButtonValue === this.radioButtonNames[0] ? true : false;
+    jsonData['return_by_state'] = this.state.radioButtonValue === this.radioButtonNames[0];
 
     var regex = /\d+/;
     var matches = this.state.housingDropdownChoice.match(regex);
