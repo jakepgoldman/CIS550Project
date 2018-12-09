@@ -129,9 +129,10 @@ def get_advanced():
             'cbsaname': set_to_return[i][1],
             'top_attribute': set_to_return[i][2]
         })
+    print(formatted_result)
     return jsonify(formatted_result)
 
-def get_optimal_query(values, direction, value):
+def get_optimal_query(values, direction, housing_value):
     sorted_values = []
     for key, value in sorted(values.items(), key=lambda x: x[1]):
         if int(value) > 0:
@@ -153,88 +154,70 @@ def get_optimal_query(values, direction, value):
     isHousingFilter = int(direction) != 0
 
     # Iterate through sorted_values, for each value, find table in table_map correspond to number. If act - add DESC
-    inner_query = get_inner_function(sorted_values, len(sorted_values), table_map, index, isHousingFilter);
+    inner_query = get_inner_function(sorted_values, len(sorted_values), table_map, index, direction, housing_value);
     sorted_query = """
+        WITH distinct_map AS (
+            SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr
+        )
         SELECT fips, cbsa_name, {attribute} FROM ({inner_query}) WHERE ROWNUM < 4 ORDER BY {attribute}
         """.format(inner_query=inner_query, attribute=table_map[sorted_values[0]])
-    return isHousingFilter ? get_housing_query(direction, value) + sorted_query : sorted_query
+    return sorted_query
 
-def get_inner_function(sorted_values, i, table_map, index, with_housing_filter):
+def get_inner_function(sorted_values, i, table_map, index, direction, value):
     i = i - 1;
     if i < 0:
+        housing_clause = ""
+        if int(direction) != 0:
+            housing_query = get_housing_query(direction, value)
+            housing_clause = "WHERE m.fips IN ({housing_query})".format(housing_query=housing_query)
         return """
             SELECT *
-            FROM Map m JOIN City c ON c.cbsaname=m.cbsa_name
-            JOIN County co ON m.fips=co.fips
-            JOIN State s ON s.state_abbr=m.state_abbr
-            JOIN Housing h ON h.fips=m.fips AND h.year = 2019
-            """ + with_housing_filter ? "WHERE m.fips NOT IN HousingTrend" : ""
+            FROM distinct_map m LEFT JOIN City c ON c.cbsaname=m.cbsa_name
+            LEFT JOIN County co ON m.fips=co.fips
+            LEFT JOIN State s ON s.state_abbr=m.state_abbr
+            LEFT JOIN Housing h ON h.fips=m.fips AND h.year = 2019
+            """ + housing_clause
     else:
         return """
             SELECT * FROM ({inner}) WHERE ROWNUM < {num_value} ORDER BY {attribute}
-            """.format(attribute=table_map[sorted_values[i]], num_value=index[i], inner=get_inner_function(sorted_values, i, table_map, index))
+            """.format(attribute=table_map[sorted_values[i]], num_value=index[i], inner=get_inner_function(sorted_values, i, table_map, index, direction, value))
 
 def get_housing_query(direction, value):
+    value = int(value)
     if value == 1:
         return """
-            WITH HousingTrend AS (
-	            SELECT H2.fips
-	            FROM Housing H1 JOIN Housing H2
-	            ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
-	            WHERE change * H2.fmr2 > change * H1.fmr2
-                AND H2.year = 2019
-            )
+            SELECT H2.fips
+            FROM Housing H1 JOIN Housing H2
+            ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
+            WHERE {change} * H2.fmr2 > {change} * H1.fmr2
+            AND H2.year = 2019
         """.format(change=direction)
     elif value == 2:
         return """
-            WITH HousingTrend AS (
-            	SELECT H3.fips
-            	FROM Housing H1
-            	JOIN Housing H2
-            	ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
-            	JOIN Housing H3
-            	ON H2.fips = H3.fips AND (H2.year + 1) = H3.year
-            	WHERE {change} * H2.fmr2 >= {change} * H1.fmr2
-            	AND {change} * H3.fmr2 >= {change} * H2.fmr2
-            	AND H3.year = 2019
-            )
+            SELECT H3.fips
+            FROM Housing H1
+            JOIN Housing H2
+            ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
+            JOIN Housing H3
+            ON H2.fips = H3.fips AND (H2.year + 1) = H3.year
+            WHERE {change} * H2.fmr2 >= {change} * H1.fmr2
+            AND {change} * H3.fmr2 >= {change} * H2.fmr2
+            AND H3.year = 2019
         """.format(change=direction)
     elif value == 3:
         return """
-            WITH HousingTrend AS (
-            	SELECT H4.fips
-            	FROM Housing H1
-            	JOIN Housing H2
-            	ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
-            	JOIN Housing H3
-            	ON H2.fips = H3.fips AND (H2.year + 1) = H3.year
-            	JOIN Housing H4
-            	ON H4.fips = H5.fips AND (H4.year + 1) = H5.year
-            	WHERE {change} * H2.fmr2 >= {change} * H1.fmr2
-            	AND {change} * H3.fmr2 >= {change} * H2.fmr2
-            	AND {change} * H4.fmr2 >= {change} * H3.fmr2
-            	AND H4.year = 2019
-            )
-        """.format(change=direction)
-    elif value == 4:
-        return """
-            WITH HousingTrend AS (
-            	SELECT H5.fips, H5.fmr2
-            	FROM Housing H1
-            	JOIN Housing H2
-            	ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
-            	JOIN Housing H3
-            	ON H2.fips = H3.fips AND (H2.year + 1) = H3.year
-            	JOIN Housing H4
-            	ON H3.fips = H4.fips AND (H3.year + 1) = H4.year
-            	JOIN Housing H5
-            	ON H4.fips = H5.fips AND (H4.year + 1) = H5.year
-            	WHERE {change} * H2.fmr2 >= {change} * H1.fmr2
-            	AND {change} * H3.fmr2 >= {change} * H2.fmr2
-            	AND {change} * H4.fmr2 >= {change} * H3.fmr2
-            	AND {change} * H5.fmr2 >= {change} * H4.fmr2
-            	AND H5.year = 2019
-            )
+            SELECT H4.fips
+            FROM Housing H1
+            JOIN Housing H2
+            ON H1.fips = H2.fips AND (H1.year + 1) = H2.year
+            JOIN Housing H3
+            ON H2.fips = H3.fips AND (H2.year + 1) = H3.year
+            JOIN Housing H4
+            ON H3.fips = H4.fips AND (H3.year + 1) = H4.year
+            WHERE {change} * H2.fmr2 >= {change} * H1.fmr2
+            AND {change} * H3.fmr2 >= {change} * H2.fmr2
+            AND {change} * H4.fmr2 >= {change} * H3.fmr2
+            AND H4.year = 2019
         """.format(change=direction)
 
 def convert_tuples(list, di):
