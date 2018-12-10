@@ -179,6 +179,8 @@ def get_advanced():
     housing_filter_value = request.args.get("housing_filter_value")
     group_by_state = request.args.get("return_by_state") == 'true'
 
+    if all(v == 0 for v in values.values()):
+        return jsonify({'housing_only': True, 'results': []})
     query = get_optimal_query(values, housing_filter_direction, housing_filter_value, group_by_state)
     print(query)
 
@@ -210,7 +212,7 @@ def get_advanced():
             })
 
     print(formatted_result)
-    return jsonify(formatted_result)
+    return jsonify({'housing_only': False, 'results': formatted_result})
 
 def get_optimal_query(values, direction, housing_value, group_by_state):
     sorted_values = []
@@ -219,8 +221,6 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
             sorted_values.append(key)
 
     sorted_values = list(reversed(sorted_values))
-    print(sorted_values[2] )
-    print(sorted_values)
 
     # poverty, unemployment - county, crime - city, housing - housing, education - state
     table_map = {

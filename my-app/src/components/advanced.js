@@ -27,6 +27,7 @@ class Advanced extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      'housing_only': false,
       'displayResult': true,
       'geoLevel': 'By County',
       'resultFips': [],
@@ -56,8 +57,10 @@ class Advanced extends Component {
     // console.log(this.state.displayResult)
     console.log(json)
     ajax(advancedURI, 'GET', json).done((data) => {
+      console.log(data)
       this.setState({
-        'resultFips': data,
+        'housing_only': data['housing_only'],
+        'resultFips': data['results'],
         'displayResult': true
       });
     }, () => {
