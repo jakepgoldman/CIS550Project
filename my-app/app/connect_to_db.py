@@ -276,8 +276,10 @@ def get_optimal_query(sorted_values, direction, housing_value, group_by_state):
     isHousingFilter = int(direction) != 0
 
     # Iterate through sorted_values, for each value, find table in table_map correspond to number. If act - add DESC
-    base_query = get_base_query(sorted_values)
-    inner_query = get_inner_function(base_query, sorted_values, len(sorted_values), table_map, asc_map, index, direction, housing_value, group_by_state);
+    base_query = get_base_query(sorted_values, direction, housing_value)
+    inner_query = get_inner_function(base_query, sorted_values, len(sorted_values), table_map, asc_map, index, group_by_state);
+    if len(sorted_values) == 1:
+        inner_query = base_query
     attribute = table_map[sorted_values[0]]
     sort = asc_map[sorted_values[0]]
     if group_by_state:
@@ -290,7 +292,7 @@ def get_optimal_query(sorted_values, direction, housing_value, group_by_state):
             SELECT * FROM (
                 SELECT final.*, ROW_NUMBER() OVER (PARTITION BY state_name ORDER BY {attribute} {sort}) AS rFinal
                 FROM ({inner_query}) final
-            ) WHERE rFinal = 1
+            ) WHERE rFinal = 1 AND {attribute} IS NOT NULL
             """.format(inner_query=inner_query, attribute=attribute, sort=sort)
     else:
         return """
@@ -299,13 +301,16 @@ def get_optimal_query(sorted_values, direction, housing_value, group_by_state):
                 UNION
                 (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
             )
+            SELECT * FROM (
             SELECT *
             FROM ({inner_query})
-            WHERE ROWNUM < 4 AND {attribute} IS NOT NULL
+            WHERE {attribute} IS NOT NULL
             ORDER BY {attribute} {sort}
+            )
+            WHERE ROWNUM < 4
             """.format(inner_query=inner_query, attribute=attribute, sort=sort)
 
-def get_base_query(sorted_values):
+def get_base_query(sorted_values, direction, value):
     query = """
         SELECT * FROM distinct_map m
         LEFT JOIN (SELECT state_name, state_abbr, act_score FROM State) s
@@ -317,20 +322,21 @@ def get_base_query(sorted_values):
         query = query + """
             LEFT JOIN (SELECT cbsaname, crime_metro FROM City) c ON c.cbsaname=m.cbsa_name
             """
-    return query
 
-def get_inner_function(base, sorted_values, i, table_map, asc_map, index, direction, value, group_by_state):
+    housing_clause = ""
+    if int(direction) != 0:
+        housing_query = get_housing_query(direction, value)
+        housing_clause = "WHERE m.fips IN ({housing_query})".format(housing_query=housing_query)
+    return query + housing_clause
+
+def get_inner_function(base, sorted_values, i, table_map, asc_map, index, group_by_state):
     i = i - 1;
     if i < 0:
-        housing_clause = ""
-        if int(direction) != 0:
-            housing_query = get_housing_query(direction, value)
-            housing_clause = "WHERE m.fips IN ({housing_query})".format(housing_query=housing_query)
-        return base + housing_clause
+        return base
     else:
         attribute = table_map[sorted_values[i]]
         sort = asc_map[sorted_values[i]]
-        inner_query = get_inner_function(base, sorted_values, i, table_map, asc_map, index, direction, value, group_by_state)
+        inner_query = get_inner_function(base, sorted_values, i, table_map, asc_map, index, group_by_state)
         null_clause = ""
         if group_by_state:
             if i == 0:
@@ -421,7 +427,7 @@ def get_result():
     return jsonify(
         crime=set_to_return[0][1],
         employment=set_to_return[0][2],
-        education=set_to_return[0][3],
+        education=(set_to_return[0][3]-20),
         housing=set_to_return[0][4],
         poverty=set_to_return[0][5],
         )
