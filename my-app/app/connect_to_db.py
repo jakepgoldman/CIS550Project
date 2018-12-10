@@ -34,11 +34,18 @@ def get_explorer():
     cur = connect_to_database()
     # low precipitation, low housing cost
     query = """
-    WITH rain_check AS (
-    SELECT cbsaname FROM City WHERE precipitation IS NOT NULL)
-    SELECT h.fips, AVG(fmr2)
-    FROM rain_check r JOIN Map m ON r.cbsaname=m.cbsa_name JOIN Housing h ON h.fips=m.fips
-    GROUP BY h.fips HAVING AVG(fmr2) < 800
+    WITH distinct_map AS (
+        (SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr)
+        UNION
+        (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
+    )
+    SELECT m.fips
+    FROM distinct_map m
+    JOIN City c ON m.cbsa_name = c.cbsaname
+    JOIN Housing h ON m.fips = h.fips
+    WHERE c.precipitation IS NOT NULL
+    AND h.year = 2019 AND h.fmr2 < 1000 AND ROWNUM < 4
+    ORDER BY c.precipitation
     """
     cur.execute(query)
     set_to_return = []
