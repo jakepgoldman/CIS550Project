@@ -111,7 +111,7 @@ class ResultPanel extends Component {
       this.props.results.map((result) => {
         return (
           <ListGroupItem key={result.fips}>
-            {this.convertFipsToCountyName(result.fips)} County, {this.convertFipsToStateName(result.fips)} <Badge pill>{result.top_attribute}</Badge>
+            {this.convertFipsToCountyName(result.fips)} County, {this.convertFipsToStateName(result.fips)} <Badge pill>{Math.abs(result.top_attribute.toFixed(1))}</Badge>
           </ListGroupItem>
         )
       })

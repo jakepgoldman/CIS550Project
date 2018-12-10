@@ -39,6 +39,7 @@ class Result extends Component {
   }
 
   componentWillReceiveProps(props) {
+    console.log(this.props.counties)
     this.setState({'markers': this.addMarker()}, () => {this.forceUpdate()});
     console.log(this.state.markers)
   }
@@ -66,6 +67,8 @@ class Result extends Component {
   }
 
   addMarker = () => {
+    console.log("HERE!!!")
+    console.log(this.props.counties)
     const markers = [];
     this.props.counties.map((county) => {markers.push(this.getCountyCenter(county))});
     return markers;
