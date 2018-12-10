@@ -2,7 +2,6 @@
 ## Fall 2019 CIS 550 Final Project
 
 ### Project Group Members
-TA: Shilpi Bose
 
 | Name          | PennKey  | GitHub        |
 | ------------- | -------- | ------------- |
@@ -10,9 +9,11 @@ TA: Shilpi Bose
 | Arnav Jagasia | jagasiaa | @arnavjagasia |
 | Jake Goldman  | goja     | @jakepgoldman |
 | James Xue     | jamesxue | @jameskxue    |
+TA: Shilpi Bose
 
 ## Overview of the CIS550Project
 __Project Description__
+
 At Penn, it is common for students to move to two places after
 graduation: New York City or San Francisco. We set out on a mission
 to prove there are many other places in the United States for you to live.

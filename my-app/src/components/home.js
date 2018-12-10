@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import { Container, Row, Col } from "reactstrap";
-import { Route, Switch } from 'react-router-dom';
 
 import Navigation from "./navigation";
 import SearchCard from "./homeComponents/searchCard";

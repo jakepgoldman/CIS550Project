@@ -41,12 +41,18 @@
   text-align: center;
 }
 
+.custom-card-wrapper {
+  flex: 1;
+}
+
 .custom-card {
-  flex: 1 ;
+  flex: 1;
+  align-items: center;
 }
 
 .map-box {
-  margin:auto;
+  margin: auto;
+  padding: 5%;
   flex: 1 0 auto;
 }
 
