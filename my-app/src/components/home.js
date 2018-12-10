@@ -44,11 +44,11 @@ class Home extends Component {
     var uri = ""
     if (choice === 'An Explorer') {
       uri = baseURI + '/explorer'
-    } else if (choice === 'Boujuee') {
+    } else if (choice === 'Boujee') {
       uri = baseURI + '/boujee'
     } else if (choice === 'A Parent') {
       uri = baseURI + '/family'
-    } else if (choice === 'A City Goer') {
+    } else if (choice === 'A City-Goer') {
       uri = baseURI + '/citygoer'
     } else if (choice === 'A Crime Lord') {
       uri = baseURI + '/crimelord'
