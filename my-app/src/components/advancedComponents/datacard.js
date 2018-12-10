@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Card, CardTitle, CardText, Popover, PopoverHeader, PopoverBody} from "reactstrap";
+import {Button, Card, CardTitle, CardText, Collapse } from "reactstrap";
 
 import countyJson from '../county.json';
 import stateJson from '../state.json';
@@ -68,26 +68,31 @@ class DataCard extends Component {
 
   fetchInfo() {
     var fips = this.props.result.fips
-    return (
-      ajax(advancedURI, 'GET', {'fips':fips}).done((data) => {
-        this.setState({
-          'crime': data.crime,
-          'employment': data.employment,
-          'poverty': data.poverty,
-          'education': data.education,
-          'housing': data.housing,
+    console.log('Here')
+    if (this.state.displayPopover) {
+      return (this.setState({
+        'displayPopover': false
+      }));
+    } else {
+      return(this.setState({
+          'crime': 1,
+          'employment': 2,
+          'poverty': 3,
+          'education': 4,
+          'housing': 5,
           'displayPopover': true
-        })
-      })
-    )
+      }));
+    }
+
   }
 
   renderPopover(countyName, stateName) {
     return (
-      <Popover placement="bottom" isOpen={this.state.popoverOpen} target='more-info-button'>
-        <PopoverHeader>Rankings for {countyName} County, {stateName}</PopoverHeader>
-        <PopoverBody>
-          {countyName} County, {stateName} ranks as follows compared to all 3007 US counties:
+      <Collapse isOpen={this.state.displayPopover} style={{'padding-top':'1em', 'max-width':'250px'}}>
+        <Card>
+        <CardTitle>National Rankings</CardTitle>
+        <CardText>
+          Rankings against all 3007 US counties:
           <ul>
             <li> Crime: {this.state.crime} </li>
             <li> Employment: {this.state.employment} </li>
@@ -95,8 +100,9 @@ class DataCard extends Component {
             <li> Education: {this.state.education} </li>
             <li> Housing: {this.state.housing} </li>
           </ul>
-        </PopoverBody>
-      </Popover>
+        </CardText>
+        </Card>
+      </Collapse>
     );
   }
 
