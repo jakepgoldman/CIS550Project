@@ -253,7 +253,8 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
     isHousingFilter = int(direction) != 0
 
     # Iterate through sorted_values, for each value, find table in table_map correspond to number. If act - add DESC
-    inner_query = get_inner_function(sorted_values, len(sorted_values), table_map, asc_map, index, direction, housing_value, group_by_state);
+    base_query = get_base_query(sorted_values)
+    inner_query = get_inner_function(base_query, sorted_values, len(sorted_values), table_map, asc_map, index, direction, housing_value, group_by_state);
     attribute = table_map[sorted_values[0]]
     sort = asc_map[sorted_values[0]]
     if group_by_state:
@@ -281,24 +282,36 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
             ORDER BY {attribute} {sort}
             """.format(inner_query=inner_query, attribute=attribute, sort=sort)
 
-def get_inner_function(sorted_values, i, table_map, asc_map, index, direction, value, group_by_state):
+def get_base_query(sorted_values):
+    query = "SELECT * FROM distinct_map m "
+    if 'crime' in sorted_values:
+        query = query + """
+            LEFT JOIN (SELECT cbsaname, crime_metro FROM City) c ON c.cbsaname=m.cbsa_name
+            """
+    if 'employment' in sorted_values or 'poverty' in sorted_values:
+        query = query + """
+            LEFT JOIN (SELECT fips, unemployment_rate, poverty_percent FROM County) co ON m.fips=co.fips
+            """
+    if "education" in sorted_values:
+        query = query + """
+            LEFT JOIN (SELECT state_name, state_abbr, act_score FROM State) s ON s.state_abbr=m.state_abbr
+            """
+    if "housing" in sorted_values:
+        query = query + "LEFT JOIN Housing h ON h.fips=m.fips AND h.year = 2019 "
+    return query
+
+def get_inner_function(base, sorted_values, i, table_map, asc_map, index, direction, value, group_by_state):
     i = i - 1;
     if i < 0:
         housing_clause = ""
         if int(direction) != 0:
             housing_query = get_housing_query(direction, value)
             housing_clause = "WHERE m.fips IN ({housing_query})".format(housing_query=housing_query)
-        return """
-            SELECT *
-            FROM distinct_map m LEFT JOIN City c ON c.cbsaname=m.cbsa_name
-            LEFT JOIN County co ON m.fips=co.fips
-            LEFT JOIN State s ON s.state_abbr=m.state_abbr
-            LEFT JOIN Housing h ON h.fips=m.fips AND h.year = 2019
-            """ + housing_clause
+        return base + housing_clause
     else:
         attribute = table_map[sorted_values[i]]
         sort = asc_map[sorted_values[i]]
-        inner_query = get_inner_function(sorted_values, i, table_map, asc_map, index, direction, value, group_by_state)
+        inner_query = get_inner_function(base, sorted_values, i, table_map, asc_map, index, direction, value, group_by_state)
         null_clause = ""
         if group_by_state:
             if i == 0:
