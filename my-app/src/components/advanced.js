@@ -33,16 +33,7 @@ class Advanced extends Component {
     }
     this.updateGeoLevel = this.updateGeoLevel.bind(this);
     this.handleSearchQuery = this.handleSearchQuery.bind(this);
-    // this.setResultFips = this.setResultFips.bind(this);
   }
-
-  // setResultFips(fips) {
-  //   if (fips !== null) {
-  //     return fips
-  //   } else {
-  //     return []
-  //   }
-  // }
 
   updateGeoLevel(level) {
     this.setState({
@@ -51,28 +42,20 @@ class Advanced extends Component {
   }
 
   handleSearchQuery(json) {
-    // console.log("RESULT1:")
-    // console.log(this.state.resultFips)
-    // console.log(this.state.displayResult)
-    console.log(json)
     ajax(advancedURI, 'GET', json).done((data) => {
       this.setState({
         'resultFips': data,
         'displayResult': true
       });
-    }, () => {
-      // console.log("RESULT3:")
-      // console.log(this.state.resultFips)
-      // console.log(this.state.displayResult)
     });
   }
 
   render() {
-    // const resultFips = [
-    //   {'rank':1, 'fips': '26163'},
-    //   {'rank':2, 'fips': '25025'},
-    //   {'rank':3, 'fips': '01001'},
-    // ];
+    const debuggingResults = [
+      {'rank':1, 'fips': '26163'},
+      {'rank':2, 'fips': '25025'},
+      {'rank':3, 'fips': '01001'},
+    ];
 
     if (!this.state.displayResult) {
       return (
@@ -88,9 +71,7 @@ class Advanced extends Component {
         </div>
       )
     }
-    console.log("RESULT2:")
-    console.log(this.state.resultFips)
-    // console.log(this.state.displayResult)
+
     return (
         <div className="advanced-landing page">
             <Navigation />
@@ -99,7 +80,7 @@ class Advanced extends Component {
               <Sidebar updateGeoLevel={this.updateGeoLevel} handleSearchQuery={this.handleSearchQuery}/>
             </div>
             <div className="result-panel-container">
-              <ResultPanel results={this.state.resultFips} geoLevel={this.state.geoLevel}/>
+              <ResultPanel housingFilter={true} results={this.state.resultFips} geoLevel={this.state.geoLevel}/>
             </div>
           </div>
         </div>

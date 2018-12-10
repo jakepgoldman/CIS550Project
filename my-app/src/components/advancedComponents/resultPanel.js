@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardTitle, CardText, Button, ListGroup, ListGroupItem, Badge } from "reactstrap";
+import { Alert, Card, CardTitle, CardText, Button, ListGroup, ListGroupItem, Badge } from "reactstrap";
 import Map from "../result.js"
 import countyJson from '../county.json';
 import stateJson from '../state.json';
@@ -128,7 +128,26 @@ class ResultPanel extends Component {
     );
   }
 
+  renderHousingFilterPanel() {
+    var counties = this.props.results;
+    return (
+      <div style={{'padding':'1%'}}>
+        <Alert color="info">
+          Abode has searched the housing data of all 3007 US Counties and narrowed it down to {counties.length} based on your filters.
+        </Alert>
+      </div>
+    )
+  }
+
   render() {
+    if (this.props.housingFilter) {
+      return (
+        <div>
+          {this.renderHousingFilterPanel()}
+          {this.renderMap()}
+        </div>
+      )
+    }
     if (this.state.geoLevel === 'By County' || this.state.geoLevel === ' ') {
       return (
           <div >
