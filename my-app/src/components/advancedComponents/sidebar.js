@@ -35,14 +35,10 @@ class Sidebar extends Component {
   }
 
   /* Create the onChange function for the slider panel */
-  updateSliders = (event, value) => {
-    var name = event.target.id;
-    if (name === "") {
-      return;
-    } else {
-      this.sliderMap.set(name, value);
-      return;
-    }
+  updateSliders = (label, value) => {
+    this.sliderMap.set(label, value);
+    console.log(`(${label}, ${value})`);
+    return;
   }
 
   /* Iterative function to render all of the sliders */
@@ -94,6 +90,7 @@ class Sidebar extends Component {
     this.setState({
       'housingDropdownChoice': value
     });
+    console.log(this.state.housingDropdownChoice)
   }
 
   /* Function to render the housing dropdown */
@@ -107,11 +104,9 @@ class Sidebar extends Component {
             <option>Decreased last year</option>
             <option>Decreased 2 years in a row</option>
             <option>Decreased 3 years in a row</option>
-            <option>Decreased 4 years in a row</option>
             <option>Increased last year</option>
             <option>Increased 2 years in a row</option>
             <option>Increased 3 years in a row</option>
-            <option>Increased 4 years in a row</option>
            </Input>
         </FormGroup>
       </Form>
@@ -127,6 +122,11 @@ class Sidebar extends Component {
         allZero =  false
       }
     }
+
+    if (this.state.housingDropdownChoice !== 'None') {
+      allZero = false
+    }
+
     console.log(allZero)
     return allZero;
   }
