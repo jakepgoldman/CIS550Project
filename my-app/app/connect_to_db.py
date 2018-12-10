@@ -166,11 +166,11 @@ def format_result(set_to_return):
 def get_advanced():
     # poverty, unemployment - county, crime - city, housing - housing, education - state
     values = {
-        "crime": request.args.get("Public Safety"),
-        "employment": request.args.get("Good Job Prospects"),
-        "poverty": request.args.get("Affluent Neighbors"),
-        "housing": request.args.get("Affordable Housing"),
-        "education": request.args.get("Good Education")
+        "crime": float(request.args.get("Public Safety")),
+        "employment": float(request.args.get("Good Job Prospects")),
+        "poverty": float(request.args.get("Affluent Neighbors")),
+        "housing": float(request.args.get("Affordable Housing")),
+        "education": float(request.args.get("Good Education"))
     }
 
     print(values)
@@ -219,6 +219,8 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
             sorted_values.append(key)
 
     sorted_values = list(reversed(sorted_values))
+    print(sorted_values[2] )
+    print(sorted_values)
 
     # poverty, unemployment - county, crime - city, housing - housing, education - state
     table_map = {
