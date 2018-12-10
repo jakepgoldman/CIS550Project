@@ -94,7 +94,7 @@ class DataCard extends Component {
         <Card>
         <CardTitle>National Rankings</CardTitle>
         <CardText>
-          Crime: {this.state.crime} <br/>
+          Crime: {this.state.crime} / 86 <br/>
           Employment: {this.state.employment} <br/>
           Poverty: {this.state.poverty} <br/>
           Education: {this.state.education} <br/>

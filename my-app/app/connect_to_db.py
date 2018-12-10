@@ -65,7 +65,10 @@ def get_family():
         WHERE ROWNUM < 15
         ORDER BY act_score DESC),
         distinct_map AS (
-        SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map GROUP BY cbsa_name, state_abbr)
+            (SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr)
+            UNION
+            (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
+        )
 
         Select m.fips
         FROM City c JOIN distinct_map m ON c.cbsaname=m.cbsa_name JOIN smart_state s ON s.state_abbr=m.state_abbr
@@ -115,7 +118,10 @@ def get_citygoer():
         WHERE cbsaname IS NOT NULL AND ROWNUM < 100
         ORDER BY crime_city),
         distinct_map AS (
-        SELECT cbsa_name, Max(fips) as fips FROM Map GROUP BY cbsa_name)
+            (SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr)
+            UNION
+            (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
+        )
 
         Select m.fips, lc.cbsaname
         FROM low_crime lc JOIN distinct_map m ON lc.cbsaname=m.cbsa_name
@@ -132,25 +138,29 @@ def get_citygoer():
 @app.route('/crimelord', methods=['GET'])
 def get_crimelord():
     cur = connect_to_database()
-    # high act, low suburb crime
+    # high crime, high unemployment
     query = """
         WITH high_crime AS (
-        SELECT cbsaname, crime_city
+        SELECT cbsaname, crime_metro
         FROM City
-        WHERE cbsaname IS NOT NULL AND ROWNUM < 100
-        ORDER BY crime_city DESC),
+        WHERE cbsaname IS NOT NULL AND ROWNUM < 20
+        ORDER BY crime_metro DESC),
         distinct_map AS (
-        SELECT cbsa_name, Max(fips) as fips
-        FROM Map GROUP BY cbsa_name),
+            (SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr)
+            UNION
+            (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
+        ),
         high_poverty AS (
         SELECT fips, poverty_percent
         FROM County
-        WHERE poverty_percent > 20 AND unemployment_rate > 7)
+        WHERE poverty_percent > 10 AND unemployment_rate > 7)
 
         Select m.fips, hc.cbsaname
-        FROM high_crime hc JOIN distinct_map m ON hc.cbsaname=m.cbsa_name JOIN high_poverty hp ON m.fips=hp.fips
+        FROM high_crime hc
+        JOIN distinct_map m ON hc.cbsaname=m.cbsa_name
+        JOIN high_poverty hp ON m.fips=hp.fips
         WHERE ROWNUM < 4
-        ORDER BY hc.crime_city, hp.poverty_percent DESC
+        ORDER BY hc.crime_metro DESC
     """
     cur.execute(query)
     set_to_return = []
