@@ -34,11 +34,18 @@ def get_explorer():
     cur = connect_to_database()
     # low precipitation, low housing cost
     query = """
-    WITH rain_check AS (
-    SELECT cbsaname FROM City WHERE precipitation IS NOT NULL)
-    SELECT h.fips, AVG(fmr2)
-    FROM rain_check r JOIN Map m ON r.cbsaname=m.cbsa_name JOIN Housing h ON h.fips=m.fips
-    GROUP BY h.fips HAVING AVG(fmr2) < 800
+    WITH distinct_map AS (
+        (SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr)
+        UNION
+        (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
+    )
+    SELECT m.fips
+    FROM distinct_map m
+    JOIN City c ON m.cbsa_name = c.cbsaname
+    JOIN Housing h ON m.fips = h.fips
+    WHERE c.precipitation IS NOT NULL
+    AND h.year = 2019 AND h.fmr2 < 1000 AND ROWNUM < 4
+    ORDER BY c.precipitation
     """
     cur.execute(query)
     set_to_return = []
@@ -366,6 +373,41 @@ def get_housing_query(direction, value):
             AND {change} * H4.fmr2 >= {change} * H3.fmr2
             AND H4.year = 2019
         """.format(change=direction)
+
+@app.route('/result', methods=['GET'])
+def get_result():
+    fips = int(request.args.get("fips"))
+    query = """
+        SELECT * FROM (
+        SELECT m.fips,
+        RANK() OVER (ORDER BY c.crime_metro) as crime,
+        RANK() OVER (ORDER BY co.unemployment_rate) as employment,
+        RANK() OVER (ORDER BY s.act_score DESC) as education,
+        RANK() OVER (ORDER BY h.fmr2) as housing,
+        RANK() OVER (ORDER BY co.poverty_percent) as poverty
+        FROM MAP m LEFT JOIN City c ON c.cbsaname=m.cbsa_name
+        LEFT JOIN County co ON m.fips=co.fips
+        LEFT JOIN State s ON s.state_abbr=m.state_abbr
+        LEFT JOIN Housing h ON h.fips=m.fips AND h.year = 2019
+        )
+        WHERE fips = {fips}
+        """.format(fips=fips)
+
+    print(query)
+
+    cur = connect_to_database()
+    cur.execute(query)
+    set_to_return = []
+    for result in cur:
+        set_to_return.append(result)
+
+    return jsonify(
+        crime=set_to_return[0][1],
+        employment=set_to_return[0][2],
+        education=set_to_return[0][3],
+        housing=set_to_return[0][4],
+        poverty=set_to_return[0][5],
+        )
 
 def convert_tuples(list, di):
     for i in range(len(list)):
