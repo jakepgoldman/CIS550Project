@@ -46,7 +46,22 @@
 }
 
 .map-box {
-  padding: 5%;
+  margin:auto;
+  flex: 1 0 auto;
+}
+
+.state-results {
+  overflow: auto;
+  max-width: 200px;
+  padding: 1%;
+  background-color: #f2f2f2;
+  flex: 1 0 auto;
+}
+
+.state-split {
+  display: flex;
+  flex-flow: row;
+  height: 100%;
 }
 
 /* SIDEBAR STYLES */
