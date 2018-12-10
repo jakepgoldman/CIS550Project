@@ -53,11 +53,11 @@ class Advanced extends Component {
   }
 
   render() {
-    // const debuggingResults = [
-    //   {'rank':1, 'fips': '26163'},
-    //   {'rank':2, 'fips': '25025'},
-    //   {'rank':3, 'fips': '01001'},
-    // ];
+    const debuggingResults = [
+      {'rank':1, 'fips': '26163', 'top_attribute': 20},
+      {'rank':2, 'fips': '25025', 'top_attribute': 10},
+      {'rank':3, 'fips': '01001', 'top_attribute': 30},
+    ];
 
     if (!this.state.displayResult) {
       return (
@@ -82,7 +82,7 @@ class Advanced extends Component {
               <Sidebar updateGeoLevel={this.updateGeoLevel} handleSearchQuery={this.handleSearchQuery}/>
             </div>
             <div className="result-panel-container">
-              <ResultPanel housingFilter={this.state.housing_only} results={this.state.resultFips} geoLevel={this.state.geoLevel}/>
+              <ResultPanel housingFilter={this.props.housing_only} results={debuggingResults} geoLevel={this.state.geoLevel}/>
             </div>
           </div>
         </div>

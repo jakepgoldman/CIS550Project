@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
-import { Alert, Card, CardTitle, CardText, Button, ListGroup, ListGroupItem, Badge } from "reactstrap";
-import Map from "../result.js"
+import { Alert, ListGroup, ListGroupItem, Badge } from "reactstrap";
+import Map from "../result.js";
+import DataCard from "./datacard.js";
+
 import countyJson from '../county.json';
 import stateJson from '../state.json';
 
 class ResultPanel extends Component {
   constructor(props) {
     super(props)
-    this.positions = ["First", "Second", "Third"];
     this.renderCards = this.renderCards.bind(this);
     this.renderMap = this.renderMap.bind(this);
     this.renderStateResults = this.renderStateResults.bind(this);
     this.renderStateResultPanel = this.renderStateResultPanel.bind(this);
-    // this.refreshMap = this.refreshMap.bind(this);
+
+    this.convertFipsToStateName = this.convertFipsToStateName.bind(this);
+    this.convertFipsToCountyName = this.convertFipsToCountyName.bind(this);
 
     this.state = {
       'geoLevel': 'By County'
@@ -29,8 +32,8 @@ class ResultPanel extends Component {
     return (
       countyJson['features'].filter(
         county =>
-          county['properties']['STATE']==paddedFips.toString().slice(0, 2) &&
-          county['properties']['COUNTY']==paddedFips.toString().slice(2, 5)
+          county['properties']['STATE'] === paddedFips.toString().slice(0, 2) &&
+          county['properties']['COUNTY']=== paddedFips.toString().slice(2, 5)
       )[0]['properties']['NAME']
     )
   }
@@ -40,47 +43,24 @@ class ResultPanel extends Component {
     return (
       stateJson['features'].filter(
         state =>
-          state['properties']['STATE']==paddedFips.toString().slice(0, 2)
+          state['properties']['STATE'] === paddedFips.toString().slice(0, 2)
       )[0]['properties']['NAME']
     )
   }
 
   renderCards() {
-    if (this.props.results.length == 0) {
+    if (this.props.results.length === 0) {
       return
     }
     var result1 = this.props.results[0];
-    var title1 = "Your " + this.positions[result1.rank -1] + " Choice"
     var result2 = this.props.results[1];
-    var title2 = "Your " + this.positions[result2.rank -1] + " Choice"
     var result3 = this.props.results[2];
-    var title3 = "Your " + this.positions[result3.rank -1] + " Choice"
+
     return (
       <div className='result-cards'>
-        <div key={result1.fips} className='custom-card'>
-          <Card body>
-            <CardTitle tag='h4'> {title1} </CardTitle>
-            <CardText>
-              {this.convertFipsToCountyName(result1.fips)} County, {this.convertFipsToStateName(result1.fips)}
-            </CardText>
-          </Card>
-        </div>
-        <div key={result2.fips} className='custom-card'>
-          <Card body>
-            <CardTitle tag='h4'> {title2} </CardTitle>
-            <CardText>
-              {this.convertFipsToCountyName(result2.fips)} County, {this.convertFipsToStateName(result2.fips)}
-            </CardText>
-          </Card>
-        </div>
-        <div key={result3.fips} className='custom-card'>
-          <Card body>
-            <CardTitle tag='h4'> {title3} </CardTitle>
-            <CardText>
-              {this.convertFipsToCountyName(result3.fips)} County, {this.convertFipsToStateName(result3.fips)}
-            </CardText>
-          </Card>
-        </div>
+        <DataCard result={result1} />
+        <DataCard result={result2} />
+        <DataCard result={result3} />
       </div>
     );
   }
@@ -89,7 +69,7 @@ class ResultPanel extends Component {
     var fipsArr = [];
     this.props.results.map((result) => {
       var paddedFips = String(result.fips).padStart(5, '0');
-      fipsArr.push(paddedFips);
+      return(fipsArr.push(paddedFips));
     })
     var shouldDisplayState = false;
     var shouldDisplayCounty = false;
