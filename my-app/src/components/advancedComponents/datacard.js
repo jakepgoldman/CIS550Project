@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Card, CardTitle, CardText, Collapse, Popover, PopoverHeader, PopoverBody} from "reactstrap";
+import {Button, Card, CardTitle, CardText, Collapse } from "reactstrap";
 
 import countyJson from '../county.json';
 import stateJson from '../state.json';
@@ -74,10 +74,8 @@ class DataCard extends Component {
         })
       )
     } else {
-      console.log("AJAX!!!")
       var fips = this.props.result.fips
       ajax(advancedURI, 'GET', {'fips':fips}).done((data) => {
-        console.log(data)
         this.setState({
           'crime': data['crime'],
           'employment': data['employment'],
@@ -92,19 +90,16 @@ class DataCard extends Component {
 
   renderPopover(countyName, stateName) {
     return (
-      <Collapse isOpen={this.state.displayPopover}>
+      <Collapse isOpen={this.state.displayPopover} style={{'padding-top':'1em', 'max-width':'250px'}}>
         <Card>
-        <CardTitle>Rankings for {countyName} County, {stateName}</CardTitle>
-          <CardText>
-            {countyName} County, {stateName} ranks as follows compared to all 3007 US counties:
-            <ul>
-              <li> Crime: {this.state.crime} </li>
-              <li> Employment: {this.state.employment} </li>
-              <li> Poverty: {this.state.poverty} </li>
-              <li> Education: {this.state.education} </li>
-              <li> Housing: {this.state.housing} </li>
-            </ul>
-          </CardText>
+        <CardTitle>National Rankings</CardTitle>
+        <CardText>
+          Crime: {this.state.crime} <br/>
+          Employment: {this.state.employment} <br/>
+          Poverty: {this.state.poverty} <br/>
+          Education: {this.state.education} <br/>
+          Housing: {this.state.housing}<br/>
+        </CardText>
         </Card>
       </Collapse>
     );

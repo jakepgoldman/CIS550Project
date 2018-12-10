@@ -180,7 +180,12 @@ def get_advanced():
         "education": float(request.args.get("Good Education"))
     }
 
-    print(values)
+    sorted_values = []
+    for key, value in sorted(values.items(), key=lambda x: x[1]):
+        if int(value) > 0:
+            sorted_values.append(key)
+
+    sorted_values = list(reversed(sorted_values))
 
     housing_filter_direction = request.args.get("housing_filter_direction")
     housing_filter_value = request.args.get("housing_filter_value")
@@ -191,7 +196,7 @@ def get_advanced():
     if housing_only:
         query = get_housing_query(housing_filter_direction, housing_filter_value)
     else:
-        query = get_optimal_query(values, housing_filter_direction, housing_filter_value, group_by_state)
+        query = get_optimal_query(sorted_values, housing_filter_direction, housing_filter_value, group_by_state)
 
     print(query)
 
@@ -201,6 +206,14 @@ def get_advanced():
     set_to_return = []
     for result in cur:
         set_to_return.append(result)
+
+    attribute_dict = {
+        "crime": 13,
+        "employment": 10,
+        "poverty": 11,
+        "housing": 8,
+        "education": 5
+    }
 
     formatted_result = []
     if housing_only:
@@ -212,30 +225,23 @@ def get_advanced():
         for i in range(len(set_to_return)):
             formatted_result.append({
                 'rank': 1,
-                'fips': set_to_return[i][0],
-                'state': set_to_return[i][1],
-                'top_attribute': set_to_return[i][2]
+                'fips': set_to_return[i][2],
+                'state': set_to_return[i][3],
+                'top_attribute': set_to_return[i][attribute_dict[sorted_values[0]]]
             })
     else:
         for i in range(len(set_to_return)):
             formatted_result.append({
                 'rank': i + 1,
-                'fips': set_to_return[i][0],
-                'state': set_to_return[i][1],
-                'top_attribute': set_to_return[i][2]
+                'fips': set_to_return[i][2],
+                'state': set_to_return[i][3],
+                'top_attribute': set_to_return[i][attribute_dict[sorted_values[0]]]
             })
 
     return jsonify({'housing_only': housing_only, 'results': formatted_result})
 
 
-def get_optimal_query(values, direction, housing_value, group_by_state):
-    sorted_values = []
-    for key, value in sorted(values.items(), key=lambda x: x[1]):
-        if int(value) > 0:
-            sorted_values.append(key)
-
-    sorted_values = list(reversed(sorted_values))
-
+def get_optimal_query(sorted_values, direction, housing_value, group_by_state):
     # poverty, unemployment - county, crime - city, housing - housing, education - state
     table_map = {
         "crime": "crime_metro",
@@ -255,6 +261,8 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
 
     # Select and order, select and order, at end order by them all
     index = [101, 76, 51, 25, 6]
+    if group_by_state:
+        index = [20, 10, 7, 5, 3]
     isHousingFilter = int(direction) != 0
 
     # Iterate through sorted_values, for each value, find table in table_map correspond to number. If act - add DESC
@@ -269,10 +277,10 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
                 UNION
                 (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
             )
-            SELECT fips, state_name, {attribute} FROM (
+            SELECT * FROM (
                 SELECT final.*, ROW_NUMBER() OVER (PARTITION BY state_name ORDER BY {attribute} {sort}) AS rFinal
                 FROM ({inner_query}) final
-            ) WHERE rFinal = 1 AND fips IS NOT NULL
+            ) WHERE rFinal = 1
             """.format(inner_query=inner_query, attribute=attribute, sort=sort)
     else:
         return """
@@ -281,7 +289,7 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
                 UNION
                 (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
             )
-            SELECT fips, state_name, {attribute}
+            SELECT *
             FROM ({inner_query})
             WHERE ROWNUM < 4 AND {attribute} IS NOT NULL
             ORDER BY {attribute} {sort}
@@ -293,14 +301,11 @@ def get_base_query(sorted_values):
         LEFT JOIN (SELECT state_name, state_abbr, act_score FROM State) s
         ON s.state_abbr=m.state_abbr
         LEFT JOIN Housing h ON h.fips=m.fips AND h.year = 2019
+        LEFT JOIN (SELECT fips, unemployment_rate, poverty_percent FROM County) co ON m.fips=co.fips
         """
     if 'crime' in sorted_values:
         query = query + """
             LEFT JOIN (SELECT cbsaname, crime_metro FROM City) c ON c.cbsaname=m.cbsa_name
-            """
-    if 'employment' in sorted_values or 'poverty' in sorted_values:
-        query = query + """
-            LEFT JOIN (SELECT fips, unemployment_rate, poverty_percent FROM County) co ON m.fips=co.fips
             """
     return query
 
