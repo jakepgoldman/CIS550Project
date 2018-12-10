@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import { render } from 'react-dom';
-import { Container, Row, Col } from "reactstrap";
-import { Map, TileLayer, Marker, Popup, GeoJSON } from 'react-leaflet';
+import { Map, TileLayer, Marker, GeoJSON } from 'react-leaflet';
 
-import stateJson from './state.json';
 import countyJson from './county.json';
 
 import '../styles/resultmap.css'
@@ -13,12 +10,6 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import 'geojson-polygon-center';
 
 var polygonCenter = require('geojson-polygon-center');
-
-type State = {
-  lat: number,
-  lng: number,
-  zoom: number,
-}
 
 class Result extends Component {
   constructor(props) {
@@ -50,8 +41,8 @@ class Result extends Component {
     console.log(paddedFips)
     var geometry = countyJson['features'].filter(
       county =>
-        county['properties']['STATE']==paddedFips.toString().slice(0, 2) &&
-        county['properties']['COUNTY']==paddedFips.toString().slice(2, 5)
+        county['properties']['STATE'] === paddedFips.toString().slice(0, 2) &&
+        county['properties']['COUNTY'] === paddedFips.toString().slice(2, 5)
     )[0]['geometry'];
     var center = polygonCenter(geometry)['coordinates'];
     if (geometry['type'] === 'MultiPolygon') {
@@ -70,7 +61,10 @@ class Result extends Component {
     console.log("HERE!!!")
     console.log(this.props.counties)
     const markers = [];
-    this.props.counties.map((county) => {markers.push(this.getCountyCenter(county))});
+    this.props.counties.map((county) =>
+      {
+        return(markers.push(this.getCountyCenter(county)))
+      });
     return markers;
   }
 
@@ -125,8 +119,6 @@ class Result extends Component {
 
   render() {
     const position = [this.state.lat, this.state.lng]
-    const shouldDisplayState = this.props.shouldDisplayState;
-    const shouldDisplayCounty = this.props.shouldDisplayCounty;
     return (
         <div>
           <Map center={position}
@@ -137,7 +129,6 @@ class Result extends Component {
               attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
             />
             {this.renderMarkers()}
-            // {this.renderStateLayer()}
             {this.renderCountyLayer()}
           </Map>
       </div>
