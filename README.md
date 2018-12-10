@@ -1,7 +1,8 @@
-# CIS550Project
+# ABODE
+## Fall 2019 CIS 550 Final Project
 
-Fall 2019 CIS 550 Final Project: `Abode`
-
+### Project Group Members
+TA: Shilpi Bose
 | Name          | PennKey  | GitHub        |
 | ------------- | -------- | ------------- |
 | Josh Doman    | joshdo   | @joshdoman    |
