@@ -4,7 +4,7 @@ Fall 2019 CIS 550 Final Project: `Abode`
 
 | Name          | PennKey  | GitHub        |
 | ------------- | -------- | ------------- |
-| Josh Doman    | joshdo   | @joshdoma     |
+| Josh Doman    | joshdo   | @joshdoman    |
 | Arnav Jagasia | jagasiaa | @arnavjagasia |
 | Jake Goldman  | goja     | @jakepgoldman |
 | James Xue     | jamesxue | @jameskxue    |
@@ -27,7 +27,7 @@ matches across the nation or return the best match in each state (where data for
 the selected attribute(s) is available).
 
 __Tech Stack__
-* Database SQL (Oracle)
+* Database: SQL (Oracle on AWS)
 * Backend Server: Python, Flask
 * Frontend: ReactJS
   * Open-Source Components: Leaflet, Reactstrap, MaterialUI
@@ -54,3 +54,8 @@ __Tech Stack__
 * To run the backend end sever, make sure you have the Oracle Client installed.
   Start the server by running `python connect_todb.py run server` in `my-app/app`
 * To run the front end server, run `npm start` in `my-app`
+
+## Extra Credit Accomplished
+* Use of AWS for hosting the Oracle Database
+* Sophisticated web database technology (React + Node + Flask Server + Oracle)
+* Map-based data visualization using Leaflet and React (housing filters data)
