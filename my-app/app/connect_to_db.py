@@ -62,7 +62,7 @@ def get_family():
 
         Select m.fips
         FROM City c JOIN distinct_map m ON c.cbsaname=m.cbsa_name JOIN smart_state s ON s.state_abbr=m.state_abbr
-        WHERE ROWNUM < 6
+        WHERE ROWNUM < 4
         ORDER BY c.crime_suburb
     """
     cur.execute(query)
@@ -87,7 +87,7 @@ def get_boujee():
 
         Select m.fips
         FROM low_crime lc JOIN Map m ON lc.cbsaname=m.cbsa_name JOIN low_poverty lp ON lp.fips=m.fips
-        WHERE ROWNUM < 6
+        WHERE ROWNUM < 4
         ORDER BY lp.poverty_percent
     """
     cur.execute(query)
@@ -112,7 +112,7 @@ def get_citygoer():
 
         Select m.fips, lc.cbsaname
         FROM low_crime lc JOIN distinct_map m ON lc.cbsaname=m.cbsa_name
-        WHERE ROWNUM < 6
+        WHERE ROWNUM < 4
         ORDER BY lc.crime_city
     """
     cur.execute(query)
@@ -142,7 +142,7 @@ def get_crimelord():
 
         Select m.fips, hc.cbsaname
         FROM high_crime hc JOIN distinct_map m ON hc.cbsaname=m.cbsa_name JOIN high_poverty hp ON m.fips=hp.fips
-        WHERE ROWNUM < 6
+        WHERE ROWNUM < 4
         ORDER BY hc.crime_city, hp.poverty_percent DESC
     """
     cur.execute(query)
@@ -159,7 +159,6 @@ def format_result(set_to_return):
         formatted_result.append({
             'rank': i + 1,
             'fips': set_to_return[i][0],
-            'cbsaname': set_to_return[i][1],
         })
     return jsonify(formatted_result)
 
@@ -249,7 +248,9 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
     if group_by_state:
         return """
             WITH distinct_map AS (
-                SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr
+                (SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr)
+                UNION
+                (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
             )
             SELECT fips, cbsa_name, state_name, {attribute} FROM (
                 SELECT final.*, ROW_NUMBER() OVER (PARTITION BY state_name ORDER BY {attribute} {sort}) AS rFinal
@@ -259,7 +260,9 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
     else:
         return """
             WITH distinct_map AS (
-                SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr
+                (SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr)
+                UNION
+                (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
             )
             SELECT fips, cbsa_name, state_name, {attribute}
             FROM ({inner_query})
