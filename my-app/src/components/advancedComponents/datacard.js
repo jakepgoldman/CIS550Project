@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Card, CardTitle, CardText, Popover, PopoverHeader, PopoverBody} from "reactstrap";
+import {Button, Card, CardTitle, CardText, Collapse, Popover, PopoverHeader, PopoverBody} from "reactstrap";
 
 import countyJson from '../county.json';
 import stateJson from '../state.json';
@@ -67,36 +67,46 @@ class DataCard extends Component {
   }
 
   fetchInfo() {
-    var fips = this.props.result.fips
-    return (
-      ajax(advancedURI, 'GET', {'fips':fips}).done((data) => {
+    if (this.state.displayPopover) {
+      return (
         this.setState({
-          'crime': data.crime,
-          'employment': data.employment,
-          'poverty': data.poverty,
-          'education': data.education,
-          'housing': data.housing,
+          'displayPopover': false
+        })
+      )
+    } else {
+      console.log("AJAX!!!")
+      var fips = this.props.result.fips
+      ajax(advancedURI, 'GET', {'fips':fips}).done((data) => {
+        console.log(data)
+        this.setState({
+          'crime': data['crime'],
+          'employment': data['employment'],
+          'poverty': data['poverty'],
+          'education': data['education'],
+          'housing': data['housing'],
           'displayPopover': true
         })
       })
-    )
+    }
   }
 
   renderPopover(countyName, stateName) {
     return (
-      <Popover placement="bottom" isOpen={this.state.popoverOpen} target='more-info-button'>
-        <PopoverHeader>Rankings for {countyName} County, {stateName}</PopoverHeader>
-        <PopoverBody>
-          {countyName} County, {stateName} ranks as follows compared to all 3007 US counties:
-          <ul>
-            <li> Crime: {this.state.crime} </li>
-            <li> Employment: {this.state.employment} </li>
-            <li> Poverty: {this.state.poverty} </li>
-            <li> Education: {this.state.education} </li>
-            <li> Housing: {this.state.housing} </li>
-          </ul>
-        </PopoverBody>
-      </Popover>
+      <Collapse isOpen={this.state.displayPopover}>
+        <Card>
+        <CardTitle>Rankings for {countyName} County, {stateName}</CardTitle>
+          <CardText>
+            {countyName} County, {stateName} ranks as follows compared to all 3007 US counties:
+            <ul>
+              <li> Crime: {this.state.crime} </li>
+              <li> Employment: {this.state.employment} </li>
+              <li> Poverty: {this.state.poverty} </li>
+              <li> Education: {this.state.education} </li>
+              <li> Housing: {this.state.housing} </li>
+            </ul>
+          </CardText>
+        </Card>
+      </Collapse>
     );
   }
 

@@ -82,7 +82,7 @@ class Advanced extends Component {
               <Sidebar updateGeoLevel={this.updateGeoLevel} handleSearchQuery={this.handleSearchQuery}/>
             </div>
             <div className="result-panel-container">
-              <ResultPanel housingFilter={this.props.housing_only} results={debuggingResults} geoLevel={this.state.geoLevel}/>
+              <ResultPanel housingFilter={this.state.housing_only} results={this.state.resultFips} geoLevel={this.state.geoLevel}/>
             </div>
           </div>
         </div>

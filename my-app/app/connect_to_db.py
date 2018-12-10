@@ -213,18 +213,16 @@ def get_advanced():
             formatted_result.append({
                 'rank': 1,
                 'fips': set_to_return[i][0],
-                'cbsaname': set_to_return[i][1],
-                'state': set_to_return[i][2],
-                'top_attribute': set_to_return[i][3]
+                'state': set_to_return[i][1],
+                'top_attribute': set_to_return[i][2]
             })
     else:
         for i in range(len(set_to_return)):
             formatted_result.append({
                 'rank': i + 1,
                 'fips': set_to_return[i][0],
-                'cbsaname': set_to_return[i][1],
-                'state': set_to_return[i][2],
-                'top_attribute': set_to_return[i][3]
+                'state': set_to_return[i][1],
+                'top_attribute': set_to_return[i][2]
             })
 
     return jsonify({'housing_only': housing_only, 'results': formatted_result})
@@ -271,7 +269,7 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
                 UNION
                 (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
             )
-            SELECT fips, cbsa_name, state_name, {attribute} FROM (
+            SELECT fips, state_name, {attribute} FROM (
                 SELECT final.*, ROW_NUMBER() OVER (PARTITION BY state_name ORDER BY {attribute} {sort}) AS rFinal
                 FROM ({inner_query}) final
             ) WHERE rFinal = 1 AND fips IS NOT NULL
@@ -283,14 +281,19 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
                 UNION
                 (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
             )
-            SELECT fips, cbsa_name, state_name, {attribute}
+            SELECT fips, state_name, {attribute}
             FROM ({inner_query})
             WHERE ROWNUM < 4 AND {attribute} IS NOT NULL
             ORDER BY {attribute} {sort}
             """.format(inner_query=inner_query, attribute=attribute, sort=sort)
 
 def get_base_query(sorted_values):
-    query = "SELECT * FROM distinct_map m "
+    query = """
+        SELECT * FROM distinct_map m
+        LEFT JOIN (SELECT state_name, state_abbr, act_score FROM State) s
+        ON s.state_abbr=m.state_abbr
+        LEFT JOIN Housing h ON h.fips=m.fips AND h.year = 2019
+        """
     if 'crime' in sorted_values:
         query = query + """
             LEFT JOIN (SELECT cbsaname, crime_metro FROM City) c ON c.cbsaname=m.cbsa_name
@@ -299,12 +302,6 @@ def get_base_query(sorted_values):
         query = query + """
             LEFT JOIN (SELECT fips, unemployment_rate, poverty_percent FROM County) co ON m.fips=co.fips
             """
-    if "education" in sorted_values:
-        query = query + """
-            LEFT JOIN (SELECT state_name, state_abbr, act_score FROM State) s ON s.state_abbr=m.state_abbr
-            """
-    if "housing" in sorted_values:
-        query = query + "LEFT JOIN Housing h ON h.fips=m.fips AND h.year = 2019 "
     return query
 
 def get_inner_function(base, sorted_values, i, table_map, asc_map, index, direction, value, group_by_state):
@@ -378,6 +375,11 @@ def get_housing_query(direction, value):
 def get_result():
     fips = int(request.args.get("fips"))
     query = """
+        WITH distinct_map AS (
+                (SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr)
+                UNION
+                (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
+        )
         SELECT * FROM (
         SELECT m.fips,
         RANK() OVER (ORDER BY c.crime_metro) as crime,
@@ -385,7 +387,7 @@ def get_result():
         RANK() OVER (ORDER BY s.act_score DESC) as education,
         RANK() OVER (ORDER BY h.fmr2) as housing,
         RANK() OVER (ORDER BY co.poverty_percent) as poverty
-        FROM MAP m LEFT JOIN City c ON c.cbsaname=m.cbsa_name
+        FROM distinct_map m LEFT JOIN City c ON c.cbsaname=m.cbsa_name
         LEFT JOIN County co ON m.fips=co.fips
         LEFT JOIN State s ON s.state_abbr=m.state_abbr
         LEFT JOIN Housing h ON h.fips=m.fips AND h.year = 2019
