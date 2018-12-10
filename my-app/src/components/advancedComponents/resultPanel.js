@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardTitle, CardText, Button, ListGroup, ListGroupItem } from "reactstrap";
+import { Card, CardTitle, CardText, Button, ListGroup, ListGroupItem, Badge } from "reactstrap";
 import Map from "../result.js"
 import countyJson from '../county.json';
 import stateJson from '../state.json';
@@ -20,31 +20,35 @@ class ResultPanel extends Component {
   }
 
   componentWillReceiveProps(props) {
-    console.log(props)
     const geoLevel = this.props.geoLevel;
-    this.setState({'geoLevel': geoLevel}, () => {this.renderMap()});
+    this.setState({'geoLevel': geoLevel});
   }
 
   convertFipsToCountyName(fips) {
+    var paddedFips = String(fips).padStart(5, '0');
     return (
       countyJson['features'].filter(
         county =>
-          county['properties']['STATE']==fips.toString().slice(0, 2) &&
-          county['properties']['COUNTY']==fips.toString().slice(2, 5)
+          county['properties']['STATE']==paddedFips.toString().slice(0, 2) &&
+          county['properties']['COUNTY']==paddedFips.toString().slice(2, 5)
       )[0]['properties']['NAME']
     )
   }
 
   convertFipsToStateName(fips) {
+    var paddedFips = String(fips).padStart(5, '0');
     return (
       stateJson['features'].filter(
         state =>
-          state['properties']['STATE']==fips.toString().slice(0, 2)
+          state['properties']['STATE']==paddedFips.toString().slice(0, 2)
       )[0]['properties']['NAME']
     )
   }
 
   renderCards() {
+    if (this.props.results.length == 0) {
+      return
+    }
     var result1 = this.props.results[0];
     var title1 = "Your " + this.positions[result1.rank -1] + " Choice"
     var result2 = this.props.results[1];
@@ -78,14 +82,14 @@ class ResultPanel extends Component {
           </Card>
         </div>
       </div>
-    )
+    );
   }
 
   renderMap = () => {
     var fipsArr = [];
     this.props.results.map((result) => {
-      console.log(result.fips);
-      fipsArr.push(result.fips);
+      var paddedFips = String(result.fips).padStart(5, '0');
+      fipsArr.push(paddedFips);
     })
     var shouldDisplayState = false;
     var shouldDisplayCounty = false;
@@ -93,7 +97,7 @@ class ResultPanel extends Component {
       console.log('Updating state')
       shouldDisplayState = true;
     }
-    if (this.state.geoLevel === 'By County') {
+    if (this.state.geoLevel === 'By County' || this.state.geoLevel === ' ') {
       console.log('Updating county')
       shouldDisplayCounty = true;
     }
@@ -101,7 +105,7 @@ class ResultPanel extends Component {
       <div className="map-box">
         <Map shouldDisplayState={shouldDisplayState} shouldDisplayCounty={shouldDisplayCounty} counties={fipsArr}/>
       </div>
-    )
+    );
   }
 
   renderStateResults() {
@@ -109,11 +113,11 @@ class ResultPanel extends Component {
       this.props.results.map((result) => {
         return (
           <ListGroupItem key={result.fips}>
-            {this.convertFipsToCountyName(result.fips)} County, {this.convertFipsToStateName(result.fips)}
+            {this.convertFipsToCountyName(result.fips)} County, {this.convertFipsToStateName(result.fips)} <Badge pill>{result.top_attribute}</Badge>
           </ListGroupItem>
         )
       })
-    )
+    );
   }
 
   renderStateResultPanel() {
@@ -121,14 +125,13 @@ class ResultPanel extends Component {
       <ListGroup>
         {this.renderStateResults()}
       </ListGroup>
-    )
+    );
   }
 
   render() {
-    if (this.state.geoLevel === 'By County') {
+    if (this.state.geoLevel === 'By County' || this.state.geoLevel === ' ') {
       return (
           <div >
-
             {this.renderCards()}
             {this.renderMap()}
           </div>

@@ -27,12 +27,23 @@ class Advanced extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      'displayResult': false,
+      'displayResult': true,
       'geoLevel': 'By County',
-      'resultFips': []
+      'resultFips': [],
     }
     this.updateGeoLevel = this.updateGeoLevel.bind(this);
+    this.handleSearchQuery = this.handleSearchQuery.bind(this);
+    // this.setResultFips = this.setResultFips.bind(this);
   }
+
+  // setResultFips(fips) {
+  //   if (fips !== null) {
+  //     return fips
+  //   } else {
+  //     return []
+  //   }
+  // }
+
   updateGeoLevel(level) {
     this.setState({
       'geoLevel': level
@@ -40,19 +51,46 @@ class Advanced extends Component {
   }
 
   handleSearchQuery(json) {
+    // console.log("RESULT1:")
+    // console.log(this.state.resultFips)
+    // console.log(this.state.displayResult)
+    console.log(json)
     ajax(advancedURI, 'GET', json).done((data) => {
-      console.log(data);
-      this.setState({'resultFips': data});
+      this.setState({
+        'resultFips': data,
+        'displayResult': true
+      });
+    }, () => {
+      // console.log("RESULT3:")
+      // console.log(this.state.resultFips)
+      // console.log(this.state.displayResult)
     });
-    console.log(json);
   }
 
   render() {
-    const resultFips = [
-      {'rank':1, 'fips': '26163'},
-      {'rank':2, 'fips': '25025'},
-      {'rank':3, 'fips': '01001'},
-    ];
+    // const resultFips = [
+    //   {'rank':1, 'fips': '26163'},
+    //   {'rank':2, 'fips': '25025'},
+    //   {'rank':3, 'fips': '01001'},
+    // ];
+
+    if (!this.state.displayResult) {
+      return (
+        <div className="advanced-landing page">
+            <Navigation />
+          <div className="advanced-content">
+            <div className="filter-panel-container">
+              <Sidebar updateGeoLevel={this.updateGeoLevel} handleSearchQuery={this.handleSearchQuery}/>
+            </div>
+            <div className="result-panel-container">
+            </div>
+          </div>
+        </div>
+      )
+    }
+    console.log("RESULT2:")
+    console.log(this.state.resultFips)
+    // console.log(this.state.displayResult)
     return (
         <div className="advanced-landing page">
             <Navigation />
@@ -61,7 +99,7 @@ class Advanced extends Component {
               <Sidebar updateGeoLevel={this.updateGeoLevel} handleSearchQuery={this.handleSearchQuery}/>
             </div>
             <div className="result-panel-container">
-              <ResultPanel results={resultFips} geoLevel={this.state.geoLevel}/>
+              <ResultPanel results={this.state.resultFips} geoLevel={this.state.geoLevel}/>
             </div>
           </div>
         </div>

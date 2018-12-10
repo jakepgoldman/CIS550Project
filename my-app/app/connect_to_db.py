@@ -45,7 +45,7 @@ def get_explorer():
     for result in cur:
         set_to_return.append(result)
 
-    return jsonify(set_to_return)
+    return format_result(set_to_return)
 
 @app.route('/family', methods=['GET'])
 def get_family():
@@ -62,7 +62,7 @@ def get_family():
 
         Select m.fips
         FROM City c JOIN distinct_map m ON c.cbsaname=m.cbsa_name JOIN smart_state s ON s.state_abbr=m.state_abbr
-        WHERE ROWNUM < 6
+        WHERE ROWNUM < 4
         ORDER BY c.crime_suburb
     """
     cur.execute(query)
@@ -70,7 +70,7 @@ def get_family():
     for result in cur:
         set_to_return.append(result)
 
-    return jsonify(set_to_return)
+    return format_result(set_to_return)
 
 @app.route('/boujee', methods=['GET'])
 def get_boujee():
@@ -87,7 +87,7 @@ def get_boujee():
 
         Select m.fips
         FROM low_crime lc JOIN Map m ON lc.cbsaname=m.cbsa_name JOIN low_poverty lp ON lp.fips=m.fips
-        WHERE ROWNUM < 6
+        WHERE ROWNUM < 4
         ORDER BY lp.poverty_percent
     """
     cur.execute(query)
@@ -95,7 +95,7 @@ def get_boujee():
     for result in cur:
         set_to_return.append(result)
 
-    return jsonify(set_to_return)
+    return format_result(set_to_return)
 
 @app.route('/citygoer', methods=['GET'])
 def get_citygoer():
@@ -112,15 +112,15 @@ def get_citygoer():
 
         Select m.fips, lc.cbsaname
         FROM low_crime lc JOIN distinct_map m ON lc.cbsaname=m.cbsa_name
-        WHERE ROWNUM < 6
-        ORDER BY lc.crime_city;
+        WHERE ROWNUM < 4
+        ORDER BY lc.crime_city
     """
     cur.execute(query)
     set_to_return = []
     for result in cur:
         set_to_return.append(result)
 
-    return jsonify(set_to_return)
+    return format_result(set_to_return)
 
 @app.route('/crimelord', methods=['GET'])
 def get_crimelord():
@@ -142,15 +142,25 @@ def get_crimelord():
 
         Select m.fips, hc.cbsaname
         FROM high_crime hc JOIN distinct_map m ON hc.cbsaname=m.cbsa_name JOIN high_poverty hp ON m.fips=hp.fips
-        WHERE ROWNUM < 6
-        ORDER BY hc.crime_city, hp.poverty_percent DESC;
+        WHERE ROWNUM < 4
+        ORDER BY hc.crime_city, hp.poverty_percent DESC
     """
     cur.execute(query)
     set_to_return = []
     for result in cur:
         set_to_return.append(result)
 
-    return jsonify(set_to_return)
+    return format_result(set_to_return)
+
+def format_result(set_to_return):
+    formatted_result = []
+    i = 0
+    for i in range(len(set_to_return)):
+        formatted_result.append({
+            'rank': i + 1,
+            'fips': set_to_return[i][0],
+        })
+    return jsonify(formatted_result)
 
 @app.route('/advanced', methods=['GET'])
 def get_advanced():
@@ -162,6 +172,8 @@ def get_advanced():
         "housing": request.args.get("Affordable Housing"),
         "education": request.args.get("Good Education")
     }
+
+    print(values)
 
     housing_filter_direction = request.args.get("housing_filter_direction")
     housing_filter_value = request.args.get("housing_filter_value")
@@ -236,17 +248,21 @@ def get_optimal_query(values, direction, housing_value, group_by_state):
     if group_by_state:
         return """
             WITH distinct_map AS (
-                SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr
+                (SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr)
+                UNION
+                (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
             )
             SELECT fips, cbsa_name, state_name, {attribute} FROM (
                 SELECT final.*, ROW_NUMBER() OVER (PARTITION BY state_name ORDER BY {attribute} {sort}) AS rFinal
                 FROM ({inner_query}) final
-            ) WHERE rFinal = 1
+            ) WHERE rFinal = 1 AND fips IS NOT NULL
             """.format(inner_query=inner_query, attribute=attribute, sort=sort)
     else:
         return """
             WITH distinct_map AS (
-                SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr
+                (SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr)
+                UNION
+                (SELECT cbsa_name, state_abbr, fips FROM Map m WHERE cbsa_name IS NULL)
             )
             SELECT fips, cbsa_name, state_name, {attribute}
             FROM ({inner_query})

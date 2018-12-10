@@ -16,7 +16,6 @@ class SearchCard extends React.Component {
 
   submitForm(history) {
     this.props.handlePredefinedSearchQuery(this.state.choice);
-    history.push('/advanced');
   }
 
   handleChange(e) {

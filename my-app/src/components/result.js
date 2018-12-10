@@ -36,15 +36,22 @@ class Result extends Component {
     }
   }
 
+  componentWillReceiveProps(props) {
+    this.setState({'markers': this.addMarker()}, () => {this.forceUpdate()});
+    console.log(this.state.markers)
+  }
+
   getCountyCenter(fips) {
+    console.log(fips)
+    var paddedFips = String(fips).padStart(5, '0');
+    console.log(paddedFips)
     var geometry = countyJson['features'].filter(
       county =>
-        county['properties']['STATE']==fips.toString().slice(0, 2) &&
-        county['properties']['COUNTY']==fips.toString().slice(2, 5)
+        county['properties']['STATE']==paddedFips.toString().slice(0, 2) &&
+        county['properties']['COUNTY']==paddedFips.toString().slice(2, 5)
     )[0]['geometry'];
     var center = polygonCenter(geometry)['coordinates'];
     if (geometry['type'] === 'MultiPolygon') {
-      // center = polygonCenter(geometry)['coordinates'][0];
       var coords = geometry['coordinates'][0];
       var newGeo = {
         'type': 'Polygon',
@@ -86,8 +93,8 @@ class Result extends Component {
   renderStateLayer() {
     const shouldDisplayState = this.props.shouldDisplayState;
     if (shouldDisplayState) {
-      return(
-        <GeoJSON data={stateJson} />
+      return (
+        <GeoJSON data={countyJson} style={this.countyFill}/>
       )
     }
   }
@@ -95,7 +102,7 @@ class Result extends Component {
   renderCountyLayer() {
     const shouldDisplayCounty = this.props.shouldDisplayCounty;
     if (shouldDisplayCounty) {
-      return(
+      return (
         <GeoJSON data={countyJson} style={this.countyFill}/>
       )
     }
@@ -104,7 +111,7 @@ class Result extends Component {
   render() {
     const position = [this.state.lat, this.state.lng]
     const shouldDisplayState = this.props.shouldDisplayState;
-    const shouldDidsplayCounty = this.props.shouldDisplayCounty;
+    const shouldDisplayCounty = this.props.shouldDisplayCounty;
     return (
         <div>
           <Map center={position}
