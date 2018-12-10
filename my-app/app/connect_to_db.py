@@ -179,9 +179,13 @@ def get_advanced():
     housing_filter_value = request.args.get("housing_filter_value")
     group_by_state = request.args.get("return_by_state") == 'true'
 
-    if all(v == 0 for v in values.values()):
-        return jsonify({'housing_only': True, 'results': []})
-    query = get_optimal_query(values, housing_filter_direction, housing_filter_value, group_by_state)
+    housing_only = all(v == 0 for v in values.values())
+    query = ""
+    if housing_only:
+        query = get_housing_query(housing_filter_direction, housing_filter_value)
+    else:
+        query = get_optimal_query(values, housing_filter_direction, housing_filter_value, group_by_state)
+
     print(query)
 
     cur = connect_to_database()
@@ -192,7 +196,12 @@ def get_advanced():
         set_to_return.append(result)
 
     formatted_result = []
-    if group_by_state:
+    if housing_only:
+        for i in range(len(set_to_return)):
+            formatted_result.append({
+                'fips': set_to_return[i][0],
+            })
+    elif group_by_state:
         for i in range(len(set_to_return)):
             formatted_result.append({
                 'rank': 1,
@@ -211,8 +220,8 @@ def get_advanced():
                 'top_attribute': set_to_return[i][3]
             })
 
-    print(formatted_result)
-    return jsonify({'housing_only': False, 'results': formatted_result})
+    return jsonify({'housing_only': housing_only, 'results': formatted_result})
+
 
 def get_optimal_query(values, direction, housing_value, group_by_state):
     sorted_values = []

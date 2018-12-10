@@ -37,7 +37,6 @@ class Sidebar extends Component {
   /* Create the onChange function for the slider panel */
   updateSliders = (label, value) => {
     this.sliderMap.set(label, value);
-    console.log(`(${label}, ${value})`);
     return;
   }
 
@@ -56,11 +55,9 @@ class Sidebar extends Component {
 
   /* Create the onChange function for the radio button panel */
   updateRadioButtons = (name) => {
-    console.log(this.state.radioButtonValue);
-
     this.setState({
       'radioButtonValue': name
-    }, () => {console.log(this.state.radioButtonValue)});
+    });
     return;
   }
 
@@ -90,7 +87,6 @@ class Sidebar extends Component {
     this.setState({
       'housingDropdownChoice': value
     });
-    console.log(this.state.housingDropdownChoice)
   }
 
   /* Function to render the housing dropdown */
@@ -114,10 +110,8 @@ class Sidebar extends Component {
   }
 
   showPopover = () => {
-    console.log('here')
     var allZero = true
     for (var item of this.sliderMap.values()) {
-      console.log(item)
       if (item !== 0) {
         allZero =  false
       }
@@ -127,7 +121,6 @@ class Sidebar extends Component {
       allZero = false
     }
 
-    console.log(allZero)
     return allZero;
   }
 
@@ -165,8 +158,6 @@ class Sidebar extends Component {
     } else {
       jsonData["housing_filter_direction"] = -1;
     }
-
-    console.log(jsonData);
 
     this.props.updateGeoLevel(this.state.radioButtonValue);
     this.props.handleSearchQuery(jsonData);

@@ -28,6 +28,8 @@ class Result extends Component {
     this.countyFill = this.countyFill.bind(this);
     this.getColor = this.getColor.bind(this);
     this.addMarker = this.addMarker.bind(this);
+    this.renderMakers = this.renderMarkers.bind(this);
+
     this.state = {
       lat: 38,
       lng: -98,
@@ -108,6 +110,16 @@ class Result extends Component {
     }
   }
 
+  renderMarkers() {
+    if (!this.props.housingFilter) {
+      return (
+        this.state.markers.map((position, idx) =>
+          <Marker key={`marker-${idx}`} position={position} />
+        )
+      );
+    }
+  }
+
   render() {
     const position = [this.state.lat, this.state.lng]
     const shouldDisplayState = this.props.shouldDisplayState;
@@ -121,9 +133,7 @@ class Result extends Component {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
             />
-            {this.state.markers.map((position, idx) =>
-              <Marker key={`marker-${idx}`} position={position} />
-            )}
+            {this.renderMarkers()}
             // {this.renderStateLayer()}
             {this.renderCountyLayer()}
           </Map>

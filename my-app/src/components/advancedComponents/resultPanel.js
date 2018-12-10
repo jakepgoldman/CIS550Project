@@ -94,16 +94,14 @@ class ResultPanel extends Component {
     var shouldDisplayState = false;
     var shouldDisplayCounty = false;
     if (this.state.geoLevel === 'By State') {
-      console.log('Updating state')
       shouldDisplayState = true;
     }
     if (this.state.geoLevel === 'By County' || this.state.geoLevel === ' ') {
-      console.log('Updating county')
       shouldDisplayCounty = true;
     }
     return (
       <div className="map-box">
-        <Map shouldDisplayState={shouldDisplayState} shouldDisplayCounty={shouldDisplayCounty} counties={fipsArr}/>
+        <Map housingFilter={this.props.housingFilter} shouldDisplayState={shouldDisplayState} shouldDisplayCounty={shouldDisplayCounty} counties={fipsArr}/>
       </div>
     );
   }
@@ -148,6 +146,7 @@ class ResultPanel extends Component {
         </div>
       )
     }
+
     if (this.state.geoLevel === 'By County' || this.state.geoLevel === ' ') {
       return (
           <div >
