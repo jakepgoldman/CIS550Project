@@ -153,7 +153,7 @@ def get_crimelord():
         high_poverty AS (
         SELECT fips, poverty_percent
         FROM County
-        WHERE poverty_percent > 10 AND unemployment_rate > 7)
+        WHERE poverty_percent > 20 AND unemployment_rate > 6)
 
         Select m.fips, hc.cbsaname
         FROM high_crime hc
