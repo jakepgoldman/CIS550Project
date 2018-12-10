@@ -7,14 +7,14 @@ class SimpleSlider extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      value: 50,
+      value: 0,
     }
     this.handleSliderChange.bind(this);
   }
 
   handleSliderChange = (event, value) => {
     this.setState({ value });
-    this.props.onChange(event, value);
+    this.props.onChange(this.props.label, value);
   };
 
   render() {
@@ -29,9 +29,6 @@ class SimpleSlider extends Component {
               label={label}
               id={label}
               onChange={this.handleSliderChange}
-              min={0}
-              max={100}
-              step={10}
             />
         </div>
     );

@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import { Container, Row, Col } from "reactstrap";
+import { Route, Switch } from 'react-router-dom';
 
 import Navigation from "./navigation";
 import SearchCard from "./homeComponents/searchCard";
 import About from "./homeComponents/about";
+import ResultPanel from "./advancedComponents/resultPanel";
 
 import $ from 'jquery';
-const tasksURI = 'http://localhost:5000/family';
+const baseURI = 'http://localhost:5000'
 
 const ajax = function(uri, method, data) {
     var request = {
@@ -25,46 +27,87 @@ const ajax = function(uri, method, data) {
     return $.ajax(request);
 }
 
-const fetchTasks = (callback) => {
-    ajax(tasksURI, 'GET', {}).done(callback);
-};
-
 class Home extends Component {
-    constructor(props) {
-      super(props);
+  constructor(props) {
+    super(props);
 
-      this.state = {
-        tasks: []
-      }
-      // this.state = {
-      //   data: null,
-      // };
+    this.state = {
+      'hasQueryResult': false,
+      'queryResult': []
     }
 
-    componentDidMount() {
-      fetchTasks((data) => {
-          console.log(data);
-          this.setState({tasks: data.tasks});
+    this.handleSearchQuery = this.handleSearchQuery.bind(this);
+  }
+
+  handleSearchQuery(choice) {
+    console.log(`Choice: ${choice}`)
+    var uri = ""
+    if (choice === 'An Explorer') {
+      uri = baseURI + '/explorer'
+    } else if (choice === 'Boujuee') {
+      uri = baseURI + '/boujee'
+    } else if (choice === 'A Parent') {
+      uri = baseURI + '/family'
+    } else if (choice === 'A City Goer') {
+      uri = baseURI + '/citygoer'
+    } else if (choice === 'A Crime Lord') {
+      uri = baseURI + '/crimelord'
+    }
+
+    ajax(uri, 'GET', {}).done((data) => {
+      this.setState({
+        'hasQueryResult': true,
+        'resultData': data
       });
-    }
+    });
 
+    // var fakeData = [
+    //   {
+    //     'rank': 1,
+    //     'fips': 5035,
+    //     'cbsaname': "Memphis, TN-MS-AR",
+    //   },
+    //   {
+    //     'rank': 2,
+    //     'fips': 4021,
+    //     'cbsaname': "Phoenix-Mesa-Scottsdale, AZ",
+    //   },
+    //   {
+    //     'rank': 3,
+    //     'fips': 6111,
+    //     'cbsaname': "Oxnard-Thousand Oaks-Ventura, CA",
+    //   }
+    // ]
+  }
 
   render() {
-    return (
-      <div className="scroll">
-        <div className="page">
-          <Navigation />
-          <div className="home">
-            <div className="search-card-container">
-              <SearchCard />
+    if (!this.state.hasQueryResult) {
+      return (
+        <div className="scroll">
+          <div className="page">
+            <Navigation />
+            <div className="home">
+              <div className="search-card-container">
+                <SearchCard handlePredefinedSearchQuery={this.handleSearchQuery}/>
+              </div>
             </div>
           </div>
+          <div className="about">
+              <About />
+          </div>
         </div>
-        <div className="about">
-                <About />
+      );
+    } else {
+      return (
+        <div className="page">
+          <Navigation />
+          <div className="result-panel-container">
+            <ResultPanel results={this.state.resultData}/>
+          </div>
         </div>
-      </div>
-    );
+      )
+    }
+
   }
 }
 
