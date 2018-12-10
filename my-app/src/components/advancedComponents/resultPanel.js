@@ -122,7 +122,7 @@ class ResultPanel extends Component {
 
   renderStateResultPanel() {
     return (
-      <ListGroup>
+      <ListGroup style={{'padding':'1%'}}>
         {this.renderStateResults()}
       </ListGroup>
     );
@@ -157,10 +157,10 @@ class ResultPanel extends Component {
       );
     } else if (this.state.geoLevel === 'By State') {
       return (
-          <div >
+          <div className="state-split">
             {this.renderMap()}
-            <div style={{overflow: 'auto', 'max-height': '200px', 'padding':'1%','background-color': '#f2f2f2'}}>
-            {this.renderStateResultPanel()}
+            <div className="state-results">
+              {this.renderStateResultPanel()}
             </div>
           </div>
       );
