@@ -283,7 +283,7 @@ def get_optimal_query(sorted_values, direction, housing_value, group_by_state):
     }
 
     # Select and order, select and order, at end order by them all
-    index = [100, 50, 25, 12, 6]
+    index = [100, 50, 25, 15, 10]
     if group_by_state:
         index = [20, 10, 7, 5, 3]
     isHousingFilter = int(direction) != 0
