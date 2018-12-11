@@ -283,7 +283,7 @@ def get_optimal_query(sorted_values, direction, housing_value, group_by_state):
     }
 
     # Select and order, select and order, at end order by them all
-    index = [101, 76, 51, 25, 6]
+    index = [100, 50, 25, 15, 10]
     if group_by_state:
         index = [20, 10, 7, 5, 3]
     isHousingFilter = int(direction) != 0
@@ -362,9 +362,11 @@ def get_inner_function(base, sorted_values, i, table_map, asc_map, index, group_
                 """.format(attribute=attribute, num_value=index[i], i=i, inner=inner_query, sort=sort, null_clause=null_clause)
         else:
             if i == 0:
-                null_clause = "AND {attribute} IS NOT NULL".format(attribute=attribute)
+                null_clause = "WHERE {attribute} IS NOT NULL".format(attribute=attribute)
             return """
-                SELECT * FROM ({inner}) WHERE ROWNUM < {num_value} {null_clause} ORDER BY {attribute} {sort}
+                SELECT * FROM (
+                    SELECT * FROM ({inner}) {null_clause} ORDER BY {attribute} {sort}
+                ) WHERE ROWNUM < {num_value}
                 """.format(attribute=attribute, num_value=index[i], inner=inner_query, sort=sort, null_clause=null_clause)
 
 def get_housing_query(direction, value):
