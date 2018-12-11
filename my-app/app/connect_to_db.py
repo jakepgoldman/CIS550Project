@@ -3,9 +3,12 @@ from flask import Flask, jsonify, request, url_for
 import cx_Oracle
 import json
 from flask_cors import CORS, cross_origin
+from flask_caching import Cache
 
 app = Flask(__name__)
 CORS(app)
+
+cache = Cache(app,config={'CACHE_TYPE': 'simple'})
 
 db_user = 'cis550project'
 db_password = 'susandavidson'
@@ -15,22 +18,12 @@ def connect_to_database():
     con = cx_Oracle.Connection(user='cis550project', password='susandavidson', dsn='cis-550-project.ccgsmtzjingg.us-east-2.rds.amazonaws.com/orcl')
     return con.cursor()
 
-@app.route('/test', methods=['GET'])
-def get_test():
-    cur = connect_to_database()
-    cur.execute('select * from State')
-    set_to_return = []
-    for result in cur:
-        # obj = json.dumps(result)
-        set_to_return.append(result)
-        # convert_tuples(obj, dict_to_return)
-
-    return jsonify(set_to_return)
-    # return jsonify(obj)
-    # return jsonify({'tasks': 'tasks'})
-
 @app.route('/explorer', methods=['GET'])
 def get_explorer():
+    return get_explorer_helper()
+
+@cache.memoize(50)
+def get_explorer_helper():
     cur = connect_to_database()
     # low precipitation, low housing cost
     query = """
@@ -56,6 +49,10 @@ def get_explorer():
 
 @app.route('/family', methods=['GET'])
 def get_family():
+    return get_family_helper()
+
+@cache.memoize(50)
+def get_family_helper():
     cur = connect_to_database()
     # high act, low suburb crime
     query = """
@@ -84,6 +81,10 @@ def get_family():
 
 @app.route('/boujee', methods=['GET'])
 def get_boujee():
+    return get_boujee_helper()
+
+@cache.memoize(50)
+def get_boujee_helper():
     cur = connect_to_database()
     # high act, low suburb crime
     query = """
@@ -109,6 +110,10 @@ def get_boujee():
 
 @app.route('/citygoer', methods=['GET'])
 def get_citygoer():
+    return get_citygoer_helper()
+
+@cache.memoize(50)
+def get_citygoer_helper():
     cur = connect_to_database()
     # high act, low suburb crime
     query = """
@@ -137,6 +142,10 @@ def get_citygoer():
 
 @app.route('/crimelord', methods=['GET'])
 def get_crimelord():
+    return get_crimelord_helper()
+
+@cache.memoize(50)
+def get_crimelord_helper():
     cur = connect_to_database()
     # high crime, high unemployment
     query = """
@@ -201,7 +210,11 @@ def get_advanced():
     housing_filter_value = request.args.get("housing_filter_value")
     group_by_state = request.args.get("return_by_state") == 'true'
 
-    housing_only = all(v == 0 for v in values.values())
+    return get_advanced_helper(sorted_values, housing_filter_direction, housing_filter_value, group_by_state)
+
+@cache.memoize(50)
+def get_advanced_helper(sorted_values, housing_filter_direction, housing_filter_value, group_by_state):
+    housing_only = len(sorted_values) == 0
     query = ""
     if housing_only:
         query = get_housing_query(housing_filter_direction, housing_filter_value)
@@ -395,6 +408,10 @@ def get_housing_query(direction, value):
 @app.route('/result', methods=['GET'])
 def get_result():
     fips = int(request.args.get("fips"))
+    return get_result_helper(fips)
+
+@cache.memoize(50)
+def get_result_helper(fips):
     query = """
         WITH distinct_map AS (
                 (SELECT cbsa_name, state_abbr, Max(fips) as fips FROM Map m GROUP BY cbsa_name, state_abbr)
